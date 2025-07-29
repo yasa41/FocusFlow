@@ -1,9 +1,19 @@
+// src/App.jsx
+import React from "react";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import Login from "./pages/Login";
+import Register from "./pages/Register";
+// import Dashboard once you create it
+
 function App() {
   return (
-    <div className="h-screen flex flex-col items-center justify-center bg-indigo-50">
-      <h1 className="text-4xl font-bold text-indigo-700">Welcome to StudySync!</h1>
-      <p className="mt-4 text-lg text-gray-600">React + Vite + Tailwind CSS is ready 🎉</p>
-    </div>
+    <Router>
+      <Routes>
+        <Route path="/login" element={<Login />} />
+        <Route path="/register" element={<Register />} />
+        
+      </Routes>
+    </Router>
   );
 }
 
