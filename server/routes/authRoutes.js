@@ -1,8 +1,18 @@
 import express from 'express';
-import { register, login, logout } from '../controllers/authControllers.js'
-const authRouter = express.Router();
-authRouter.post('/register', register);
-authRouter.post('/login', login);
-authRouter.post('/logout', logout);
+import { register, login, logout, updateProfile } from '../controllers/authControllers.js';
+import { verifyToken } from '../middleware/auth.js';
 
-export default authRouter;
+const router = express.Router();
+
+// Public routes (no authentication required)
+router.post('/register', register);
+router.post('/login', login);
+
+// Protected routes (authentication required)
+router.post('/logout', verifyToken, logout);
+router.put('/profile', verifyToken, updateProfile);
+
+// Optional: Add a route to get current user info
+router.get('/me', verifyToken, getCurrentUser);
+
+export default router;

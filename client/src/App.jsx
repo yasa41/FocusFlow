@@ -1,20 +1,6 @@
-// src/App.jsx
-import React from "react";
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import Login from "./pages/Login";
-import Register from "./pages/Register";
-// import Dashboard once you create it
+import SlidingAuth from './pages/SlidingAuth';
 
 function App() {
-  return (
-    <Router>
-      <Routes>
-        <Route path="/login" element={<Login />} />
-        <Route path="/register" element={<Register />} />
-        
-      </Routes>
-    </Router>
-  );
+  return <SlidingAuth />;
 }
-
 export default App;
