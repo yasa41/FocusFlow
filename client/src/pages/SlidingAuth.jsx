@@ -1,5 +1,6 @@
 import React, { useState } from "react";
-import { loginUser, registerUser } from "../services/api"; // Adjust path as needed
+import { loginUser, registerUser } from "../services/api"; 
+import ProfileCompletion from "../components/ProfileCompletion"; // <-- import
 import "./SlidingAuth.css";
 
 export default function SlidingAuth() {
@@ -8,24 +9,20 @@ export default function SlidingAuth() {
   const [signInData, setSignInData] = useState({ email: "", password: "" });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [showProfileCompletion, setShowProfileCompletion] = useState(false); // <-- new
 
   const handleSignUpSubmit = async (e) => {
     e.preventDefault();
     setError("");
     setLoading(true);
-    
     try {
-      const response = await registerUser(
-        signUpData.name, 
-        signUpData.email, 
-        signUpData.password
-      );
+      const response = await registerUser(signUpData.name, signUpData.email, signUpData.password);
 
       if (response.data.success) {
-        alert("Sign up successful!");
+        // clear form
         setSignUpData({ name: "", email: "", password: "" });
-        // Optionally switch to sign in mode
-        // setIsSignUpMode(false);
+        // show profile completion page
+        setShowProfileCompletion(true);
       } else {
         setError(response.data.message || "Sign up failed");
       }
@@ -45,14 +42,12 @@ export default function SlidingAuth() {
     e.preventDefault();
     setError("");
     setLoading(true);
-    
     try {
       const response = await loginUser(signInData.email, signInData.password);
-
       if (response.data.success) {
-        alert("Sign in successful!");
         setSignInData({ email: "", password: "" });
-        // Handle successful login (redirect, update state, etc.)
+        // redirect to dashboard
+        window.location.href = "/dashboard";
       } else {
         setError(response.data.message || "Sign in failed");
       }
@@ -67,6 +62,26 @@ export default function SlidingAuth() {
       setLoading(false);
     }
   };
+
+  // after completing profile
+  const handleProfileComplete = () => {
+    window.location.href = "/dashboard";
+  };
+
+  // if user skips profile
+  const handleProfileSkip = () => {
+    window.location.href = "/dashboard";
+  };
+
+  // show profile completion after registration
+  if (showProfileCompletion) {
+    return (
+      <ProfileCompletion
+        onComplete={handleProfileComplete}
+        onSkip={handleProfileSkip}
+      />
+    );
+  }
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-purple-200 via-pink-100 to-purple-300">
@@ -134,7 +149,7 @@ export default function SlidingAuth() {
           </form>
         </div>
 
-        {/* Overlay Panel - Same as before */}
+        {/* Overlay Panel */}
         <div className="overlay-container">
           <div className="overlay">
             <div className="overlay-panel overlay-left">

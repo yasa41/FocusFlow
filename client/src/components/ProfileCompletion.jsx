@@ -1,6 +1,6 @@
 // src/components/ProfileCompletion.js
-import React, { useState } from "react";
-import { updateUserProfile } from "../services/api"; 
+import React, { useState, useEffect } from "react";
+import { updateUserProfile, getCurrentUser } from "../services/api"; // <- make sure getCurrentUser exists in api.js
 
 export default function ProfileCompletion({ onComplete, onSkip }) {
   const [profileData, setProfileData] = useState({
@@ -11,6 +11,7 @@ export default function ProfileCompletion({ onComplete, onSkip }) {
   const [newInterest, setNewInterest] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [isFetching, setIsFetching] = useState(true);
 
   // Predefined interest options
   const predefinedInterests = [
@@ -18,6 +19,27 @@ export default function ProfileCompletion({ onComplete, onSkip }) {
     "Art", "Music", "Sports", "Languages", "Psychology", "Business",
     "Technology", "Medicine", "Engineering", "Philosophy"
   ];
+
+  // Fetch existing profile info when component mounts
+  useEffect(() => {
+    const fetchProfile = async () => {
+      try {
+        const res = await getCurrentUser();
+        if (res.data.success && res.data.user) {
+          setProfileData({
+            avatar: res.data.user.avatar || "",
+            bio: res.data.user.bio || "",
+            interests: res.data.user.interests || []
+          });
+        }
+      } catch (err) {
+        console.error("Error fetching profile:", err);
+      } finally {
+        setIsFetching(false);
+      }
+    };
+    fetchProfile();
+  }, []);
 
   const handleAddInterest = () => {
     if (newInterest.trim() && !profileData.interests.includes(newInterest.trim())) {
@@ -32,7 +54,7 @@ export default function ProfileCompletion({ onComplete, onSkip }) {
   const removeInterest = (interestToRemove) => {
     setProfileData({
       ...profileData,
-      interests: profileData.interests.filter(interest => interest !== interestToRemove)
+      interests: profileData.interests.filter((interest) => interest !== interestToRemove)
     });
   };
 
@@ -53,13 +75,14 @@ export default function ProfileCompletion({ onComplete, onSkip }) {
     try {
       const response = await updateUserProfile(profileData);
       if (response.data.success) {
-        onComplete();
+        alert("Profile updated successfully!");
+        onComplete(); // Redirect or close modal
       } else {
         setError(response.data.message || "Failed to update profile");
       }
     } catch (err) {
       console.error("Profile update error:", err);
-      setError("Failed to update profile. Please try again.");
+      setError(err.response?.data?.message || "Failed to update profile. Please try again.");
     } finally {
       setLoading(false);
     }
@@ -68,6 +91,15 @@ export default function ProfileCompletion({ onComplete, onSkip }) {
   const handleSkip = () => {
     onSkip();
   };
+
+  // Loader for fetching profile
+  if (isFetching) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <p className="text-gray-500">Loading your profile...</p>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-200 via-indigo-100 to-purple-300 p-4">
@@ -124,7 +156,7 @@ export default function ProfileCompletion({ onComplete, onSkip }) {
             <label className="block text-sm font-medium text-gray-700 mb-2">
               Interests
             </label>
-            
+
             {/* Predefined interests */}
             <div className="mb-4">
               <p className="text-sm text-gray-600 mb-2">Quick select:</p>
@@ -155,7 +187,7 @@ export default function ProfileCompletion({ onComplete, onSkip }) {
                 onChange={(e) => setNewInterest(e.target.value)}
                 placeholder="Add custom interest"
                 className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                onKeyPress={(e) => e.key === 'Enter' && (e.preventDefault(), handleAddInterest())}
+                onKeyPress={(e) => e.key === "Enter" && (e.preventDefault(), handleAddInterest())}
               />
               <button
                 type="button"
