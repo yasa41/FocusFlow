@@ -51,7 +51,7 @@ export const login = async (req, res) => {
             maxAge: 7 * 24 * 60 * 60 * 1000
         });
 
-            return res.json({ success: true, token });
+        return res.json({ success: true, token });
 
     } catch (error) {
         return res.json({ success: false, message: error.message });
@@ -72,3 +72,51 @@ export const logout = async (req, res) => {
         return res.json({ success: false, message: error.message });
     }
 }
+export const updateProfile = async (req, res) => {
+    try {
+        const { avatar, bio, interests } = req.body;
+        const userId = req.user.id;
+
+        const user = await userModel.findByIdAndUpdate(
+            userId,
+            {
+                avatar,
+                bio,
+                interests,
+            },
+            { new: true, runValidators: true }
+        ).select('-password -resetPasswordToken -resetPasswordExpire');
+
+        if (!user) {
+            return res.json({ success: false, message: "User not found" });
+        }
+
+        return res.json({
+            success: true,
+            message: "Profile updated successfully",
+            user
+        });
+    } catch (error) {
+        console.error('Profile update error:', error);
+        return res.json({ success: false, message: error.message });
+    }
+};
+
+// Add this function to get current user data
+export const getCurrentUser = async (req, res) => {
+    try {
+        const user = await userModel.findById(req.user.id)
+            .select('-password -resetPasswordToken -resetPasswordExpire');
+
+        if (!user) {
+            return res.json({ success: false, message: "User not found" });
+        }
+
+        return res.json({
+            success: true,
+            user
+        });
+    } catch (error) {
+        return res.json({ success: false, message: error.message });
+    }
+};

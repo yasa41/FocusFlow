@@ -9,7 +9,7 @@ import authRouter from "./routes/authRoutes.js";
 dotenv.config();
 
 const app = express();
-const port = process.env.PORT || 3000;
+const port = process.env.PORT || 5000;
 
 // Connect to MongoDB
 connectDB();
@@ -27,6 +27,15 @@ app.use("/api/auth", authRouter);
 
 app.get("/", (req, res) => {
   res.send(" StudySync API is running...");
+});
+
+// Global error handler
+app.use((err, req, res, next) => {
+  console.error(err.stack);
+  res.status(500).json({ 
+    success: false, 
+    message: 'Something went wrong!' 
+  });
 });
 
 app.listen(port, () =>
