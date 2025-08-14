@@ -15,7 +15,7 @@ export const register = async (req, res) => {
             return res.json({ success: false, message: "user already exists" });
         }
         const hashedPassword = await bcrypt.hash(password, 10);
-        const user = new userModel({ name, email, password: hashedPassword })
+        const user = new userModel({ name, email, password: hashedPassword , isOnboarded: false })
         await user.save();
         const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: '7d' });
         res.cookie('token', token, {
@@ -24,7 +24,7 @@ export const register = async (req, res) => {
             maxAge: 7 * 24 * 60 * 60 * 1000
         });
 
-        return res.json({ success: true, token });
+        return res.json({ success: true, token });//add onboarding message later 
     } catch (error) {
         res.json({ success: false, message: error.message })
     }
@@ -43,6 +43,8 @@ export const login = async (req, res) => {
         if (!isMatch) {
             return res.json({ success: false, message: 'Invalid passsword or email' })
         }
+         user.lastActivityDate = new Date();
+        await user.save();
         const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: '7d' });
 
         res.cookie('token', token, {
@@ -72,6 +74,8 @@ export const logout = async (req, res) => {
         return res.json({ success: false, message: error.message });
     }
 }
+
+//add onboarding functions to keep them checked
 export const updateProfile = async (req, res) => {
     try {
         const { avatar, bio, interests } = req.body;
@@ -102,7 +106,7 @@ export const updateProfile = async (req, res) => {
     }
 };
 
-// Add this function to get current user data
+
 export const getCurrentUser = async (req, res) => {
     try {
         const user = await userModel.findById(req.user.id)

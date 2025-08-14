@@ -1,4 +1,13 @@
 import { useState } from 'react';
+import { 
+  FiHome, 
+  FiUsers, 
+  FiTarget, 
+  FiBell, 
+  FiAward, 
+  FiUser,
+  FiSettings
+} from 'react-icons/fi';
 
 export default function Sidebar() {
   const [activeItem, setActiveItem] = useState('dashboard');
@@ -7,39 +16,33 @@ export default function Sidebar() {
     {
       id: 'dashboard',
       label: 'Dashboard',
-      icon: '📊',
-      isActive: true
+      icon: FiHome
     },
     {
       id: 'groups',
       label: 'My Groups',
-      icon: '👥',
-      isActive: false
+      icon: FiUsers
     },
     {
       id: 'goals',
       label: 'Personal Goals',
-      icon: '🎯',
-      isActive: false
+      icon: FiTarget
     },
     {
       id: 'notifications',
       label: 'Notifications',
-      icon: '🔔',
-      isActive: false,
-      badge: 3 // Notification count
+      icon: FiBell,
+      badge: 3
     },
     {
       id: 'leaderboard',
       label: 'Leaderboard',
-      icon: '🏆',
-      isActive: false
+      icon: FiAward
     },
     {
       id: 'profile',
       label: 'Profile',
-      icon: '👤',
-      isActive: false
+      icon: FiUser
     }
   ];
 
@@ -49,15 +52,15 @@ export default function Sidebar() {
   };
 
   return (
-    <aside className="w-64 bg-white shadow-lg h-full flex flex-col">
+    <aside className="w-64 bg-white shadow-sm border-r border-gray-200 h-full flex flex-col">
       {/* Logo Section */}
       <div className="p-6 border-b border-gray-100">
         <div className="flex items-center space-x-3">
-          <div className="w-10 h-10 bg-purple-600 rounded-lg flex items-center justify-center">
+          <div className="w-10 h-10 bg-blue-600 rounded-lg flex items-center justify-center">
             <span className="text-white font-bold text-lg">S</span>
           </div>
           <div>
-            <h1 className="text-xl font-bold text-gray-800">StudySync</h1>
+            <h1 className="text-xl font-semibold text-gray-900">StudySync</h1>
             <p className="text-xs text-gray-500">Collaborative Planner</p>
           </div>
         </div>
@@ -65,45 +68,48 @@ export default function Sidebar() {
 
       {/* Navigation Menu */}
       <nav className="flex-1 p-4">
-        <div className="space-y-2">
-          {menuItems.map((item) => (
-            <button
-              key={item.id}
-              onClick={() => handleItemClick(item.id)}
-              className={`w-full flex items-center justify-between p-3 rounded-lg text-left transition-all duration-200 ${
-                activeItem === item.id
-                  ? 'bg-purple-50 text-purple-600 border-r-2 border-purple-600'
-                  : 'text-gray-600 hover:bg-gray-50 hover:text-gray-800'
-              }`}
-            >
-              <div className="flex items-center space-x-3">
-                <span className="text-lg">{item.icon}</span>
-                <span className="font-medium">{item.label}</span>
-              </div>
-              
-              {/* Notification Badge */}
-              {item.badge && (
-                <span className="bg-red-500 text-white text-xs rounded-full px-2 py-1 min-w-[20px] text-center">
-                  {item.badge}
-                </span>
-              )}
-            </button>
-          ))}
+        <div className="space-y-1">
+          {menuItems.map((item) => {
+            const Icon = item.icon;
+            return (
+              <button
+                key={item.id}
+                onClick={() => handleItemClick(item.id)}
+                className={`w-full flex items-center justify-between p-3 rounded-lg text-left transition-colors duration-200 ${
+                  activeItem === item.id
+                    ? 'bg-blue-50 text-blue-700 font-medium'
+                    : 'text-gray-700 hover:bg-gray-50 hover:text-gray-900'
+                }`}
+              >
+                <div className="flex items-center space-x-3">
+                  <Icon className="w-5 h-5" />
+                  <span className="font-medium">{item.label}</span>
+                </div>
+                
+                {/* Notification Badge */}
+                {item.badge && (
+                  <span className="bg-red-500 text-white text-xs rounded-full px-2 py-1 min-w-[20px] text-center font-medium">
+                    {item.badge}
+                  </span>
+                )}
+              </button>
+            );
+          })}
         </div>
       </nav>
 
       {/* User Section at Bottom */}
       <div className="p-4 border-t border-gray-100">
-        <div className="flex items-center space-x-3 p-3 rounded-lg hover:bg-gray-50 cursor-pointer">
-          <div className="w-10 h-10 bg-gradient-to-r from-purple-400 to-purple-600 rounded-full flex items-center justify-center">
+        <div className="flex items-center space-x-3 p-3 rounded-lg hover:bg-gray-50 cursor-pointer transition-colors duration-200">
+          <div className="w-10 h-10 bg-gray-600 rounded-full flex items-center justify-center">
             <span className="text-white font-semibold text-sm">AK</span>
           </div>
           <div className="flex-1 min-w-0">
-            <p className="font-medium text-gray-800 truncate">Alex Kim</p>
+            <p className="font-medium text-gray-900 truncate">Alex Kim</p>
             <p className="text-sm text-gray-500 truncate">Student</p>
           </div>
-          <button className="text-gray-400 hover:text-gray-600">
-            <span className="text-lg">⚙️</span>
+          <button className="text-gray-400 hover:text-gray-600 transition-colors duration-200">
+            <FiSettings className="w-5 h-5" />
           </button>
         </div>
       </div>
@@ -113,9 +119,9 @@ export default function Sidebar() {
         <div className="text-center">
           <div className="flex justify-center items-center space-x-2 mb-2">
             <span className="text-2xl">🔥</span>
-            <span className="text-2xl font-bold text-orange-500">7</span>
+            <span className="text-2xl font-bold text-blue-600">7</span>
           </div>
-          <p className="text-sm text-gray-600">Day Streak</p>
+          <p className="text-sm font-medium text-gray-600">Day Streak</p>
         </div>
       </div>
     </aside>
