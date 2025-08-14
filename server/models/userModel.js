@@ -1,25 +1,70 @@
 import mongoose from "mongoose";
 
 const userSchema = new mongoose.Schema({
-  name: { type: String, required: true },
-  email: { type: String, required: true, unique: true },
+  //Authentication fields
+  name: { type: String, required: true, trim: true },
+  email: {
+    type: String, required: true, unique: true, lowercase: true,
+    trim: true
+  },
   password: { type: String, required: true },
   resetPasswordToken: { type: String },
   resetPasswordExpire: { type: Date },
 
-  // New fields for StudySync profile and collaboration
-  avatar: { type: String, default: "" },        // Avatar URL, emoji, or color code string
-  bio: { type: String, maxlength: 200, default: "" },  // Short user bio
-  interests: [{ type: String }],                 // Array of interest tags/keywords
-  groups: [{ type: mongoose.Schema.Types.ObjectId, ref: "Group" }],  // IDs of groups user belongs to
+  //Profile fields
+  avatar: { type: String, default: "" },
+  bio: { type: String, maxlength: 200, default: "", trim: true },
+  interests: [{
+    type: String,
+    trim: true,
+    maxlength: 50
+  }],
 
-  // Gamification fields
-  streak: { type: Number, default: 0 },
-  points: { type: Number, default: 0 },
-  badges: [{ type: String }],
+  // Onboarding tracking
+  isOnboarded: { type: Boolean, default: false },
+  onboardingCompletedAt: { type: Date },
 
-  createdAt: { type: Date, default: Date.now },
-});
+  // Group relationships
+  groups: [{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Group"
+  }],
+  ownedGroups: [{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Group"
+  }],
+
+  //Gamification fields
+  totalPoints: { type: Number, default: 0, min: 0 },
+  currentStreak: { type: Number, default: 0, min: 0 },
+  longestStreak: { type: Number, default: 0, min: 0 },
+  lastActivityDate: { type: Date },
+  level: { type: Number, default: 1, min: 1 },
+
+  // Streak tracking
+  streakData: {
+    daily: { type: Number, default: 0 },
+    weekly: { type: Number, default: 0 },
+    monthly: { type: Number, default: 0 }
+  },
+
+  // Achievement system
+  badges: [{
+    type: {
+      type: String,
+      required: true
+    },
+    earnedAt: {
+      type: Date,
+      default: Date.now
+    },
+    description: String
+  }]
+},
+  // Adds timestamps for created and updates
+  {
+    timestamps: true
+  });
 
 const userModel = mongoose.models.user || mongoose.model("user", userSchema);
 export default userModel;
