@@ -1,3 +1,5 @@
+import { FiUsers, FiCalendar, FiMoreHorizontal } from 'react-icons/fi';
+
 export default function GroupCard({ group }) {
   const getColorClasses = (color) => {
     const colors = {
@@ -55,12 +57,12 @@ export default function GroupCard({ group }) {
   };
 
   return (
-    <div className={`${colorClasses.bg} border ${colorClasses.border} rounded-xl p-6 transition-all duration-300 cursor-pointer group hover:shadow-lg hover:-translate-y-1 ${colorClasses.hover}`}>
+    <div className={`${colorClasses.bg} border ${colorClasses.border} rounded-xl p-6 transition-all duration-300 cursor-pointer group hover:shadow-md hover:-translate-y-0.5 ${colorClasses.hover}`}>
       
       {/* Header */}
       <div className="flex items-start justify-between mb-4">
         <div className="flex items-start space-x-3 flex-1">
-          <div className="text-2xl group-hover:scale-110 transition-transform duration-200">
+          <div className="text-2xl group-hover:scale-105 transition-transform duration-200">
             {getTypeIcon(group.type)}
           </div>
           <div className="flex-1 min-w-0">
@@ -68,39 +70,44 @@ export default function GroupCard({ group }) {
             <p className="text-gray-600 text-sm truncate">{group.subject}</p>
           </div>
         </div>
-        <span className={`${colorClasses.badge} text-xs px-3 py-1 rounded-full font-medium capitalize flex-shrink-0`}>
-          {group.type}
-        </span>
+        <div className="flex items-center space-x-2">
+          <span className={`${colorClasses.badge} text-xs px-3 py-1 rounded-full font-medium capitalize`}>
+            {group.type}
+          </span>
+          <button className="opacity-0 group-hover:opacity-100 p-1 rounded-md hover:bg-white/50 transition-all duration-200">
+            <FiMoreHorizontal className="w-4 h-4 text-gray-500" />
+          </button>
+        </div>
       </div>
 
       {/* Progress Section */}
       <div className="mb-4">
         <div className="flex items-center justify-between mb-2">
           <span className="text-sm font-medium text-gray-700">Weekly Progress</span>
-          <span className={`text-sm font-bold ${getProgressColor(group.progress)}`}>
+          <span className={`text-sm font-semibold ${getProgressColor(group.progress)}`}>
             {group.progress}%
           </span>
         </div>
-        <div className="w-full bg-gray-200 rounded-full h-2.5 overflow-hidden">
+        <div className="w-full bg-gray-200 rounded-full h-2 overflow-hidden">
           <div 
-            className={`${colorClasses.progress} h-2.5 rounded-full transition-all duration-700 ease-out`}
+            className={`${colorClasses.progress} h-2 rounded-full transition-all duration-500 ease-out`}
             style={{ width: `${group.progress}%` }}
           />
         </div>
-        <div className="flex justify-between text-xs text-gray-500 mt-1">
+        <div className="flex justify-between text-xs text-gray-500 mt-2">
           <span>This week</span>
           <span>{Math.round((group.progress / 100) * 10)}/10 goals</span>
         </div>
       </div>
 
-      {/* Members and Days Left */}
-      <div className="flex items-center justify-between mb-4">
-        <div className="flex items-center space-x-2">
+      {/* Members and Stats */}
+      <div className="flex items-center justify-between">
+        <div className="flex items-center space-x-3">
           <div className="flex -space-x-2">
             {group.members.slice(0, 3).map((member, index) => (
               <div
                 key={member.id}
-                className="w-7 h-7 bg-gradient-to-br from-purple-400 to-purple-600 rounded-full border-2 border-white flex items-center justify-center text-xs text-white font-medium shadow-sm hover:scale-110 transition-transform duration-200"
+                className="w-8 h-8 bg-gray-600 rounded-full border-2 border-white flex items-center justify-center text-xs text-white font-medium shadow-sm hover:scale-105 transition-transform duration-200"
                 style={{ zIndex: group.members.length - index }}
                 title={member.name}
               >
@@ -108,20 +115,26 @@ export default function GroupCard({ group }) {
               </div>
             ))}
             {group.members.length > 3 && (
-              <div className="w-7 h-7 bg-gray-300 rounded-full border-2 border-white flex items-center justify-center text-xs text-gray-600 font-medium shadow-sm">
+              <div className="w-8 h-8 bg-gray-400 rounded-full border-2 border-white flex items-center justify-center text-xs text-gray-600 font-medium shadow-sm">
                 +{group.members.length - 3}
               </div>
             )}
           </div>
-          <span className="text-sm text-gray-600 font-medium">
-            {group.members.length} member{group.members.length !== 1 ? 's' : ''}
-          </span>
+          <div className="flex items-center space-x-1 text-gray-600">
+            <FiUsers className="w-4 h-4" />
+            <span className="text-sm font-medium">
+              {group.members.length} member{group.members.length !== 1 ? 's' : ''}
+            </span>
+          </div>
         </div>
         
-      
+        {group.daysLeft && (
+          <div className="flex items-center space-x-1 text-gray-500">
+            <FiCalendar className="w-4 h-4" />
+            <span className="text-sm font-medium">{group.daysLeft} days left</span>
+          </div>
+        )}
       </div>
-
-      
     </div>
   );
 }
