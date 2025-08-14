@@ -1,6 +1,5 @@
-import Dashboard from "./pages/Dashboard";
-
+import StudySyncLanding from "./components/LandingPage";
 function App() {
-  return <Dashboard />;
+  return <StudySyncLanding/>;
 }
 export default App;
