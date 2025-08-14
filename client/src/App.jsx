@@ -1,6 +1,6 @@
-import SlidingAuth from './pages/SlidingAuth';
+import Dashboard from "./pages/Dashboard";
 
 function App() {
-  return <SlidingAuth />;
+  return <Dashboard />;
 }
 export default App;
