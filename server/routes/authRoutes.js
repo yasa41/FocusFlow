@@ -10,9 +10,5 @@ router.post('/login', login);
 
 // Protected routes (authentication required)
 router.post('/logout', verifyToken, logout);
-router.put('/profile', verifyToken, updateProfile);
-
-// Optional: Add a route to get current user info
-//router.get('/me', verifyToken, getCurrentUser);
 
 export default router;

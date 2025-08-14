@@ -20,10 +20,6 @@ const userSchema = new mongoose.Schema({
     maxlength: 50
   }],
 
-  // Onboarding tracking
-  isOnboarded: { type: Boolean, default: false },
-  onboardingCompletedAt: { type: Date },
-
   // Group relationships
   groups: [{
     type: mongoose.Schema.Types.ObjectId,
@@ -48,18 +44,7 @@ const userSchema = new mongoose.Schema({
     monthly: { type: Number, default: 0 }
   },
 
-  // Achievement system
-  badges: [{
-    type: {
-      type: String,
-      required: true
-    },
-    earnedAt: {
-      type: Date,
-      default: Date.now
-    },
-    description: String
-  }]
+
 },
   // Adds timestamps for created and updates
   {
