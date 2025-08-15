@@ -2,6 +2,7 @@ import mongoose from "mongoose";
 import groupModel from "../models/groupModel.js";
 import { generateInviteCode } from "../utils/inviteCode.js";
 
+//functions related to the owner of a group
 export const createGroup = async (req, res) => {
   try {
     const { name, description } = req.body;
@@ -125,7 +126,6 @@ export const updateGroup = async (req, res) => {
   }
 };
 
-
 export const removeMember = async (req, res) => {
   try {
     const groupId = req.params.id;
@@ -190,7 +190,6 @@ export const removeMember = async (req, res) => {
     });
   }
 };
-
 
 export const transferOwnership = async (req, res) => {
   try {
@@ -261,6 +260,163 @@ export const transferOwnership = async (req, res) => {
     res.status(500).json({
       success: false,
       message: 'Server error while transferring ownership'
+    });
+  }
+};
+
+//Functions related to all members of a group 
+
+export const joinGroup = async (req, res) => {
+  try {
+    const { inviteCode } = req.body;  
+    const userId = req.user.id;         
+    
+    // Find group by invite code
+    const group = await groupModel.findOne({ inviteCode });
+    
+    if (!group) {
+      return res.status(404).json({
+        success: false,
+        message: 'Invalid invite code. Please check the code and try again.'
+      });
+    }
+    
+    // Check if user is already a member
+    if (group.members.includes(userId)) {
+      return res.status(400).json({
+        success: false,
+        message: 'You are already a member of this group'
+      });
+    }
+    
+    // Check if user is the owner (they're already a member)
+    if (group.owner.toString() === userId) {
+      return res.status(400).json({
+        success: false,
+        message: 'You are the owner of this group'
+      });
+    }
+    
+    // Check if group is full
+    if (group.members.length >= group.maxMembers) {
+      return res.status(400).json({
+        success: false,
+        message: 'Group is full. Cannot join at this time.'
+      });
+    }
+    
+    // Add user 
+    group.members.push(userId);
+    await group.save();
+    
+    res.status(200).json({
+      success: true,
+      message: `Successfully joined "${group.name}"!`,
+      group: {
+        id: group._id,
+        name: group.name,
+        description: group.description,
+        memberCount: group.members.length,
+        maxMembers: group.maxMembers,
+        joinedAt: new Date()
+      }
+    });
+    
+  } catch (error) {
+    console.error('Join group error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Server error while joining group'
+    });
+  }
+};
+
+export const getGroupDetails = async (req, res) => {
+  try {
+    const groupId = req.params.id;
+    const userId = req.user.id;
+    
+    const group = await groupModel.findById(groupId);
+    
+    if (!group) {
+      return res.status(404).json({ success: false, message: 'Group not found' });
+    }
+    
+    // Check if user is a member
+    const isOwner = group.owner.toString() === userId;
+    const isMember = group.members.includes(userId);
+    
+    if (!isOwner && !isMember) {
+      return res.status(403).json({ success: false, message: 'Access denied' });
+    }
+    
+    res.json({
+      success: true,
+      group: {
+        id: group._id,
+        name: group.name,
+        description: group.description,
+        memberCount: group.members.length,
+        isOwner,
+       
+        inviteCode: isOwner ? group.inviteCode : undefined,
+        createdAt: group.createdAt
+      }
+    });
+  } catch (error) {
+    res.status(500).json({ success: false, message: 'Server error' });
+  }
+};
+
+export const leaveGroup = async (req, res) => {
+  try {
+    const groupId = req.params.id;
+    const userId = req.user.id;
+    
+    const group = await groupModel.findById(groupId);
+    
+    if (!group) {
+      return res.status(404).json({
+        success: false,
+        message: 'Group not found'
+      });
+    }
+    
+    // Check if user is a member
+    if (!group.members.includes(userId)) {
+      return res.status(400).json({
+        success: false,
+        message: 'You are not a member of this group'
+      });
+    }
+    
+    // Owner cannot leave  
+    if (group.owner.toString() === userId) {
+      return res.status(400).json({
+        success: false,
+        message: 'As owner, you must transfer ownership before leaving the group'
+      });
+    }
+    
+    // Remove user 
+    group.members = group.members.filter(memberId => memberId.toString() !== userId);
+    await group.save();
+    
+    res.json({
+      success: true,
+      message: `You have successfully left "${group.name}"`,
+      group: {
+        id: group._id,
+        name: group.name,
+        memberCount: group.members.length
+      }
+    });
+    
+  } catch (error) {
+    console.error('Leave group error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Server error while leaving group'
     });
   }
 };

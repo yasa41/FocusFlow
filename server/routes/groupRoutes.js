@@ -1,5 +1,5 @@
 import express from "express";
-import { createGroup, deleteGroup, removeMember, transferOwnership, updateGroup } from "../controllers/groupController.js";
+import { createGroup, deleteGroup, getGroupDetails, joinGroup, leaveGroup, removeMember, transferOwnership, updateGroup } from "../controllers/groupController.js";
 import { verifyToken } from '../middleware/auth.js';
 
 const router = express.Router();
@@ -12,5 +12,9 @@ router.delete('/:id/remove/:userId', verifyToken, removeMember);
 routes.put('/:id/transfer-ownership', verifyToken, transferOwnership);
 
 //Routes accessible to all members
+
+router.post('/join', verifyToken, joinGroup);
+router.get('/:id/details', verifyToken, getGroupDetails);
+router.post('/:id/leave', verifyToken, leaveGroup);
 
 export default router;
