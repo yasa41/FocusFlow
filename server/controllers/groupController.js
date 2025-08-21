@@ -30,6 +30,14 @@ export const createGroup = async (req, res) => {
 
     await group.save();
 
+    //update user model as well
+    await userModel.findByIdAndUpdate(ownerId, {
+      $addToSet: {
+        groups: group._id,
+        ownedGroups: group._id
+      }
+    });
+
     res.status(201).json({
       success: true,
       message: 'Group created successfully',
@@ -70,6 +78,18 @@ export const deleteGroup = async (req, res) => {
         message: 'Access denied.Only the group owner can delete the group'
       })
     }
+
+    //Remove group from all members (including owner)
+    await userModel.updateMany(
+      { groups: groupId },           // Find all users who have this group
+      { $pull: { groups: groupId } } // Remove from their groups array
+    );
+
+    //Remove group from owner's ownedGroups 
+    await userModel.findByIdAndUpdate(userId, {
+      $pull: { ownedGroups: groupId }
+    });
+
     await groupModel.findByIdAndDelete(groupId);
     return res.json({
       success: true,
@@ -129,19 +149,19 @@ export const updateGroup = async (req, res) => {
 export const removeMember = async (req, res) => {
   try {
     const groupId = req.params.id;
-    const targetUserId = req.params.userId;  
-    const ownerId = req.user.id;            
-    
+    const targetUserId = req.params.userId;
+    const ownerId = req.user.id;
+
     // Find the group
     const group = await groupModel.findById(groupId);
-    
+
     if (!group) {
       return res.status(404).json({
         success: false,
         message: 'Group not found'
       });
     }
-    
+
     // Only owner can remove members
     if (group.owner.toString() !== ownerId) {
       return res.status(403).json({
@@ -149,7 +169,7 @@ export const removeMember = async (req, res) => {
         message: 'Only group owner can remove members'
       });
     }
-    
+
     // Can't remove yourself as owner 
     if (targetUserId === ownerId) {
       return res.status(400).json({
@@ -157,7 +177,7 @@ export const removeMember = async (req, res) => {
         message: 'Cannot remove yourself as owner. Transfer ownership first.'
       });
     }
-    
+
     // Check if user is actually a member
     if (!group.members.includes(targetUserId)) {
       return res.status(400).json({
@@ -165,12 +185,17 @@ export const removeMember = async (req, res) => {
         message: 'User is not a member of this group'
       });
     }
-    
+
     // Remove user 
     group.members = group.members.filter(memberId => memberId.toString() !== targetUserId);
-    
+
     await group.save();
-    
+
+    //Remove group from target users groups array
+    await userModel.findByIdAndUpdate(targetUserId, {
+      $pull: { groups: groupId }
+    });
+
     res.json({
       success: true,
       message: 'Member removed successfully',
@@ -181,7 +206,7 @@ export const removeMember = async (req, res) => {
         removedUserId: targetUserId
       }
     });
-    
+
   } catch (error) {
     console.error('Remove member error:', error);
     res.status(500).json({
@@ -196,17 +221,17 @@ export const transferOwnership = async (req, res) => {
     const groupId = req.params.id;
     const { newOwnerId } = req.body;
     const currentOwnerId = req.user.id;
-    
+
     // Find the group
     const group = await groupModel.findById(groupId);
-    
+
     if (!group) {
       return res.status(404).json({
         success: false,
         message: 'Group not found'
       });
     }
-    
+
     // Only current owner can transfer ownership
     if (group.owner.toString() !== currentOwnerId) {
       return res.status(403).json({
@@ -214,7 +239,7 @@ export const transferOwnership = async (req, res) => {
         message: 'Only the current group owner can transfer ownership'
       });
     }
-    
+
     // Validate new owner ID 
     if (!newOwnerId) {
       return res.status(400).json({
@@ -222,7 +247,7 @@ export const transferOwnership = async (req, res) => {
         message: 'New owner ID is required'
       });
     }
-    
+
     // Can't transfer to yourself
     if (newOwnerId === currentOwnerId) {
       return res.status(400).json({
@@ -230,7 +255,7 @@ export const transferOwnership = async (req, res) => {
         message: 'Cannot transfer ownership to yourself'
       });
     }
-    
+
     // New owner must be a member of the group
     if (!group.members.includes(newOwnerId)) {
       return res.status(400).json({
@@ -238,11 +263,21 @@ export const transferOwnership = async (req, res) => {
         message: 'New owner must be a member of the group'
       });
     }
-    
+
     // Transfer ownership
     group.owner = newOwnerId;
     await group.save();
-    
+
+    //update user model
+    await userModel.findByIdAndUpdate(currentOwnerId, {
+      $pull: { ownedGroups: groupId }
+    });
+
+    // Add group to new owner's ownedGroups array
+    await userModel.findByIdAndUpdate(newOwnerId, {
+      $addToSet: { ownedGroups: groupId }
+    });
+
     res.json({
       success: true,
       message: 'Ownership transferred successfully',
@@ -254,7 +289,7 @@ export const transferOwnership = async (req, res) => {
         memberCount: group.members.length
       }
     });
-    
+
   } catch (error) {
     console.error('Transfer ownership error:', error);
     res.status(500).json({
@@ -268,19 +303,19 @@ export const transferOwnership = async (req, res) => {
 
 export const joinGroup = async (req, res) => {
   try {
-    const { inviteCode } = req.body;  
-    const userId = req.user.id;         
-    
+    const { inviteCode } = req.body;
+    const userId = req.user.id;
+
     // Find group by invite code
     const group = await groupModel.findOne({ inviteCode });
-    
+
     if (!group) {
       return res.status(404).json({
         success: false,
         message: 'Invalid invite code. Please check the code and try again.'
       });
     }
-    
+
     // Check if user is already a member
     if (group.members.includes(userId)) {
       return res.status(400).json({
@@ -288,7 +323,7 @@ export const joinGroup = async (req, res) => {
         message: 'You are already a member of this group'
       });
     }
-    
+
     // Check if user is the owner (they're already a member)
     if (group.owner.toString() === userId) {
       return res.status(400).json({
@@ -296,7 +331,7 @@ export const joinGroup = async (req, res) => {
         message: 'You are the owner of this group'
       });
     }
-    
+
     // Check if group is full
     if (group.members.length >= group.maxMembers) {
       return res.status(400).json({
@@ -304,11 +339,16 @@ export const joinGroup = async (req, res) => {
         message: 'Group is full. Cannot join at this time.'
       });
     }
-    
+
     // Add user 
     group.members.push(userId);
     await group.save();
-    
+
+    //update user model 
+    await userModel.findByIdAndUpdate(userId, {
+      $addToSet: { groups: group._id }
+    });
+
     res.status(200).json({
       success: true,
       message: `Successfully joined "${group.name}"!`,
@@ -321,7 +361,7 @@ export const joinGroup = async (req, res) => {
         joinedAt: new Date()
       }
     });
-    
+
   } catch (error) {
     console.error('Join group error:', error);
     res.status(500).json({
@@ -335,21 +375,21 @@ export const getGroupDetails = async (req, res) => {
   try {
     const groupId = req.params.id;
     const userId = req.user.id;
-    
+
     const group = await groupModel.findById(groupId);
-    
+
     if (!group) {
       return res.status(404).json({ success: false, message: 'Group not found' });
     }
-    
+
     // Check if user is a member
     const isOwner = group.owner.toString() === userId;
     const isMember = group.members.includes(userId);
-    
+
     if (!isOwner && !isMember) {
       return res.status(403).json({ success: false, message: 'Access denied' });
     }
-    
+
     res.json({
       success: true,
       group: {
@@ -358,7 +398,7 @@ export const getGroupDetails = async (req, res) => {
         description: group.description,
         memberCount: group.members.length,
         isOwner,
-       
+
         inviteCode: isOwner ? group.inviteCode : undefined,
         createdAt: group.createdAt
       }
@@ -372,16 +412,16 @@ export const leaveGroup = async (req, res) => {
   try {
     const groupId = req.params.id;
     const userId = req.user.id;
-    
+
     const group = await groupModel.findById(groupId);
-    
+
     if (!group) {
       return res.status(404).json({
         success: false,
         message: 'Group not found'
       });
     }
-    
+
     // Check if user is a member
     if (!group.members.includes(userId)) {
       return res.status(400).json({
@@ -389,7 +429,7 @@ export const leaveGroup = async (req, res) => {
         message: 'You are not a member of this group'
       });
     }
-    
+
     // Owner cannot leave  
     if (group.owner.toString() === userId) {
       return res.status(400).json({
@@ -397,10 +437,15 @@ export const leaveGroup = async (req, res) => {
         message: 'As owner, you must transfer ownership before leaving the group'
       });
     }
-    
+
     // Remove user 
     group.members = group.members.filter(memberId => memberId.toString() !== userId);
     await group.save();
+
+    //update user model
+    await userModel.findByIdAndUpdate(userId, {
+      $pull: { groups: groupId }
+    });
     
     res.json({
       success: true,
@@ -411,7 +456,7 @@ export const leaveGroup = async (req, res) => {
         memberCount: group.members.length
       }
     });
-    
+
   } catch (error) {
     console.error('Leave group error:', error);
     res.status(500).json({

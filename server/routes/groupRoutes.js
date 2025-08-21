@@ -9,7 +9,7 @@ router.post('/', verifyToken, createGroup);
 router.delete('/:id/delete', verifyToken, deleteGroup);
 router.put('/:id/update', verifyToken, updateGroup);
 router.delete('/:id/remove/:userId', verifyToken, removeMember);
-routes.put('/:id/transfer-ownership', verifyToken, transferOwnership);
+router.put('/:id/transfer-ownership', verifyToken, transferOwnership);
 
 //Routes accessible to all members
 
