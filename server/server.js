@@ -5,8 +5,10 @@ import cookieParser from "cookie-parser";
 
 import connectDB from "./config/mongodb.js";
 import authRouter from "./routes/authRoutes.js";
-import userRouter from './routes/userroutes.js'
-import groupRouter from './routes/groupRoutes.js'
+import userRouter from './routes/userroutes.js';
+import groupRouter from './routes/groupRoutes.js';
+import taskRouter from './routes/taskRoutes.js';
+
 dotenv.config();
 
 const app = express();
@@ -27,7 +29,7 @@ app.use(cookieParser());
 app.use("/api/auth", authRouter);
 app.use("/api/user", userRouter);
 app.use("/api/groups", groupRouter);
-
+app.use("/api/tasks",taskRouter);
 
 
 app.get("/", (req, res) => {

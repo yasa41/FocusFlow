@@ -1,5 +1,6 @@
 import mongoose from "mongoose";
 import groupModel from "../models/groupModel.js";
+import userModel from "../models/userModel.js";
 import { generateInviteCode } from "../utils/inviteCode.js";
 
 //functions related to the owner of a group
@@ -81,8 +82,8 @@ export const deleteGroup = async (req, res) => {
 
     //Remove group from all members (including owner)
     await userModel.updateMany(
-      { groups: groupId },           // Find all users who have this group
-      { $pull: { groups: groupId } } // Remove from their groups array
+      { groups: groupId },           
+      { $pull: { groups: groupId } } 
     );
 
     //Remove group from owner's ownedGroups 
