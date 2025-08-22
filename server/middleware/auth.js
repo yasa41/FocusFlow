@@ -14,7 +14,7 @@ export const verifyToken = async (req, res, next) => {
 
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
     
-    // Optional: Check if user still exists
+    //Check if user still exists
     const user = await userModel.findById(decoded.id).select('-password');
     if (!user) {
       return res.status(401).json({ 
