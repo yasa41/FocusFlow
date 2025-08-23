@@ -3,7 +3,7 @@ import { Routes, Route } from "react-router-dom";
 import LandingPage from "./pages/LandingPage";
 import SlidingAuth from "./pages/SlidingAuth";
 import Dashboard from "./pages/Dashboard";
-import ProfileCompletion from "./components/ProfileCompletion";
+import ProfileCompletion from "./pages/ProfileCompletion";
 
 function App() {
   return (
