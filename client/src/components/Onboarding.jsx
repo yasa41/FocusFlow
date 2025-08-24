@@ -12,9 +12,9 @@ export default function Onboarding() {
   useEffect(() => {
     const fetchUserData = async () => {
       try {
-        console.log('Calling /me endpoint...'); // Debug log
+        console.log('Calling /me endpoint...');
         const response = await getCurrentUser();
-        console.log('/me response:', response.data); // Debug log
+        console.log('/me response:', response.data); 
         
         if (response.data.success) {
           setUserData(response.data.user);
