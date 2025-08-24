@@ -11,7 +11,6 @@ export default function SlidingAuth() {
   const [signInData, setSignInData] = useState({ email: "", password: "" });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
-  const [showProfileCompletion, setShowProfileCompletion] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const navigate = useNavigate();
 
@@ -24,7 +23,7 @@ export default function SlidingAuth() {
 
       if (response.data.success) {
         setSignUpData({ name: "", email: "", password: "" });
-        setShowProfileCompletion(true);
+        navigate("/onboarding");
       } else {
         setError(response.data.message || "Sign up failed");
       }
@@ -48,7 +47,7 @@ export default function SlidingAuth() {
       const response = await loginUser(signInData.email, signInData.password);
       if (response.data.success) {
         setSignInData({ email: "", password: "" });
-        window.location.href = "/dashboard";
+        navigate("/dashboard");
       } else {
         setError(response.data.message || "Sign in failed");
       }
@@ -63,23 +62,6 @@ export default function SlidingAuth() {
       setLoading(false);
     }
   };
-
-  const handleProfileComplete = () => {
-    window.location.href = "/dashboard";
-  };
-
-  const handleProfileSkip = () => {
-    window.location.href = "/dashboard";
-  };
-
-  if (showProfileCompletion) {
-    return (
-      <ProfileCompletion
-        onComplete={handleProfileComplete}
-        onSkip={handleProfileSkip}
-      />
-    );
-  }
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-purple-50 relative overflow-hidden">

@@ -1,40 +1,49 @@
+// services/api.js
 import axios from "axios";
 
-const api = axios.create({
-  baseURL:  import.meta.env.VITE_API_URL,
+// Auth API (for login, register, logout)
+const authAPI = axios.create({
+baseURL:  import.meta.env.VITE_API_AUTH,  withCredentials: true,
+});
+
+// Users API (for /me, /profile,/dashboard)
+const usersAPI = axios.create({
+  baseURL: import.meta.env.VITE_API_USER,
   withCredentials: true,
 });
 
-// Response interceptor for better error handling
-api.interceptors.response.use(
-  (response) => response,
-  (error) => {
-    if (error.response?.status === 401) {
-      // Token expired or invalid - redirect to login
-      localStorage.removeItem('user');
-      window.location.href = '/login';
-    }
-    console.error('API Error:', error);
-    return Promise.reject(error);
+// Response interceptor for BOTH APIs
+const handleResponse = (response) => response;
+const handleError = (error) => {
+  if (error.response?.status === 401) {
+    localStorage.removeItem('user');
+    window.location.href = '/auth'; 
   }
-);
+  console.error('API Error:', error);
+  return Promise.reject(error);
+};
 
+authAPI.interceptors.response.use(handleResponse, handleError);
+usersAPI.interceptors.response.use(handleResponse, handleError);
+
+// Auth functions
 export const registerUser = (name, email, password) => {
-  return api.post("/register", { name, email, password });
+  return authAPI.post("/register", { name, email, password });
 };
 
 export const loginUser = (email, password) => {
-  return api.post("/login", { email, password });
+  return authAPI.post("/login", { email, password });
 };
 
 export const logoutUser = () => {
-  return api.post("/logout");
+  return authAPI.post("/logout");
+};
+
+// User functions  
+export const getCurrentUser = () => {
+  return usersAPI.get("/me"); 
 };
 
 export const updateUserProfile = (profileData) => {
-  return api.put("/profile", profileData);
-};
-
-export const getCurrentUser = () => {
-  return api.get("/me");
+  return usersAPI.put("/profile", profileData); 
 };
