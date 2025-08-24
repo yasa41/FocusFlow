@@ -1,51 +1,11 @@
 import { FiPlus, FiGrid, FiList } from 'react-icons/fi';
 import GroupCard from './GroupCard';
 
-export default function GroupsSection() {
-  // Mock data - replace with real data from API later
-  const groups = [
-    {
-      id: 1,
-      name: "CS 101 Study Group",
-      subject: "Computer Science",
-      progress: 90,
-      daysLeft: 3,
-      members: [
-        { id: 1, name: "Alex", avatar: "AK" },
-        { id: 2, name: "Sarah", avatar: "SM" },
-        { id: 3, name: "Mike", avatar: "MJ" },
-      ],
-      color: "purple",
-      type: "study"
-    },
-    {
-      id: 2,
-      name: "Fitness Challenge",
-      subject: "Health & Wellness",
-      progress: 30,
-      daysLeft: 25,
-      members: [
-        { id: 1, name: "Alex", avatar: "AK" },
-        { id: 4, name: "Emma", avatar: "ET" },
-        { id: 5, name: "Josh", avatar: "JW" },
-        { id: 6, name: "Lisa", avatar: "LH" },
-      ],
-      color: "green",
-      type: "fitness"
-    },
-    {
-      id: 3,
-      name: "React Mastery",
-      subject: "Web Development",
-      progress: 75,
-      daysLeft: 7,
-      members: [
-        { id: 1, name: "Alex", avatar: "AK" },
-        { id: 7, name: "Dev", avatar: "DP" },
-      ],
-      color: "blue",
-      type: "coding"
-    }
+export default function GroupsSection({ groups }) { // ✅ Accept groups prop
+  // ✅ Use real API data - combine owned and member groups
+  const allGroups = [
+    ...(groups?.memberOf || []),
+    ...(groups?.owned || [])
   ];
 
   return (
@@ -55,20 +15,12 @@ export default function GroupsSection() {
         <div>
           <h2 className="text-2xl font-semibold text-gray-900">My Study Groups</h2>
           <p className="text-gray-600 mt-1">
-            Track progress with your study buddies • {groups.length} active groups
+            Track progress with your study buddies • {allGroups.length} active groups
           </p>
         </div>
         
         <div className="flex items-center space-x-3">
-          {/* View Toggle - Optional */}
-          <div className="hidden sm:flex items-center bg-gray-100 rounded-lg p-1">
-            <button className="p-2 bg-white rounded-md shadow-sm">
-              <FiGrid className="w-4 h-4 text-gray-600" />
-            </button>
-            <button className="p-2 text-gray-400 hover:text-gray-600 transition-colors">
-              <FiList className="w-4 h-4" />
-            </button>
-          </div>
+        
           
           {/* Create Group Button */}
           <button className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors duration-200 flex items-center space-x-2 shadow-sm">
@@ -78,15 +30,15 @@ export default function GroupsSection() {
         </div>
       </div>
 
-      {/* Groups Grid */}
+      {/* Groups Grid - Uses real API data */}
       <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {groups.map(group => (
+        {allGroups.map(group => (
           <GroupCard key={group.id} group={group} />
         ))}
       </div>
 
       {/* Empty State - Show when no groups */}
-      {groups.length === 0 && (
+      {allGroups.length === 0 && (
         <div className="text-center py-12">
           <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
             <FiGrid className="w-8 h-8 text-gray-400" />
@@ -95,9 +47,7 @@ export default function GroupsSection() {
           <p className="text-gray-500 mb-6">
             Create your first study group to start collaborating with others.
           </p>
-          <button className="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition-colors duration-200 font-medium">
-            Create Your First Group
-          </button>
+         
         </div>
       )}
     </section>

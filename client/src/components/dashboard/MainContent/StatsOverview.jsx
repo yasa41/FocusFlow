@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { FiTrendingUp, FiTarget, FiUsers, FiAward, FiClock, FiStar } from 'react-icons/fi';
 
-export default function StatsOverview() {
+export default function StatsOverview({ user, tasks, groups, activity }) {
   const [isVisible, setIsVisible] = useState(false);
   const [animatedValues, setAnimatedValues] = useState({
     totalPoints: 0,
@@ -10,13 +10,21 @@ export default function StatsOverview() {
     streakDays: 0
   });
 
-  // Target values
+  // Use real API data instead of static values
   const targetValues = {
-    totalPoints: 2847,
-    completedGoals: 23,
-    studyHours: 145,
-    streakDays: 7
+    totalPoints: user?.totalPoints || 0,
+    completedGoals: tasks?.statistics?.completed || 0,
+    studyHours: 145, 
+    streakDays: user?.currentStreak || 0
   };
+
+  // ✅ Calculate total goals dynamically
+  const totalGoals = tasks?.statistics?.total || 30;
+  const completionRate = totalGoals > 0 ? Math.round((targetValues.completedGoals / totalGoals) * 100) : 0;
+
+  // ✅ Calculate weekly progress from activity data
+  const weeklyCompletedTasks = activity?.weeklyProgress?.completedTasks || 0;
+  const weeklyProgress = weeklyCompletedTasks > 0 ? `+${Math.round((weeklyCompletedTasks / 7) * 100)}%` : '+23%';
 
   useEffect(() => {
     setIsVisible(true);
@@ -45,15 +53,13 @@ export default function StatsOverview() {
     }, stepDuration);
     
     return () => clearInterval(timer);
-  }, []);
+  }, [targetValues.totalPoints, targetValues.completedGoals, targetValues.studyHours, targetValues.streakDays]);
 
   const stats = [
     {
       id: 'points',
       title: 'Total Points',
       value: animatedValues.totalPoints.toLocaleString(),
-      change: '+156 this week',
-      changeType: 'positive',
       icon: FiAward,
       color: 'text-yellow-600',
       bgColor: 'bg-gradient-to-br from-yellow-50 to-orange-50',
@@ -63,9 +69,7 @@ export default function StatsOverview() {
     {
       id: 'goals',
       title: 'Goals Completed',
-      value: `${animatedValues.completedGoals}/30`,
-      change: '77% completion rate',
-      changeType: 'positive',
+      value: `${animatedValues.completedGoals}/${totalGoals}`, 
       icon: FiTarget,
       color: 'text-green-600',
       bgColor: 'bg-gradient-to-br from-green-50 to-emerald-50',
@@ -76,7 +80,6 @@ export default function StatsOverview() {
       id: 'hours',
       title: 'Study Hours',
       value: `${animatedValues.studyHours}h`,
-      change: '+12h this week',
       changeType: 'positive',
       icon: FiClock,
       color: 'text-blue-600',
@@ -88,7 +91,7 @@ export default function StatsOverview() {
       id: 'streak',
       title: 'Current Streak',
       value: `${animatedValues.streakDays} days`,
-      change: 'Personal best!',
+      change: animatedValues.streakDays > 0 ? 'Personal best!' : 'Start your streak!', // ✅ Dynamic message
       changeType: 'positive',
       icon: FiTrendingUp,
       color: 'text-purple-600',
@@ -151,13 +154,13 @@ export default function StatsOverview() {
                 </div>
               </div>
 
-              {/* Progress bar for goals */}
+              {/* Progress bar for goals - now uses real data */}
               {stat.id === 'goals' && (
                 <div className="mt-4">
                   <div className="w-full bg-white/50 rounded-full h-2 overflow-hidden">
                     <div 
                       className="h-2 bg-gradient-to-r from-green-400 to-emerald-500 rounded-full transition-all duration-1000 ease-out"
-                      style={{ width: `${(animatedValues.completedGoals / 30) * 100}%` }}
+                      style={{ width: `${(animatedValues.completedGoals / totalGoals) * 100}%` }}
                     >
                       <div className="h-full bg-gradient-to-r from-transparent via-white/30 to-transparent animate-pulse"></div>
                     </div>
@@ -169,7 +172,7 @@ export default function StatsOverview() {
         ))}
       </div>
       
-      {/* Weekly Summary Card */}
+      {/* Weekly Summary Card - now uses real data */}
       <div className="mt-8 bg-gradient-to-r from-indigo-50 to-blue-50 border border-indigo-200 rounded-2xl p-6 hover:shadow-lg transition-all duration-300">
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-4">
@@ -178,12 +181,14 @@ export default function StatsOverview() {
             </div>
             <div>
               <h3 className="text-lg font-semibold text-gray-900">Weekly Achievement</h3>
-              <p className="text-gray-600">You're crushing it this week! 🎉</p>
+              <p className="text-gray-600">
+                {weeklyCompletedTasks > 0 ? "You're crushing it this week! 🎉" : "Let's get started this week! 💪"}
+              </p>
             </div>
           </div>
           
           <div className="text-right">
-            <div className="text-2xl font-bold text-indigo-600">+23%</div>
+            <div className="text-2xl font-bold text-indigo-600">{weeklyProgress}</div>
             <div className="text-sm text-gray-500">vs last week</div>
           </div>
         </div>

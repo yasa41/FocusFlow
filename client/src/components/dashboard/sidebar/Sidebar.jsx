@@ -12,8 +12,7 @@ import {
   FiChevronDown
 } from 'react-icons/fi';
 
-export default function Sidebar({ user, logoutUser }) {
-  const [activeItem, setActiveItem] = useState('dashboard');
+export default function Sidebar({ user, logoutUser, activeView, onNavigate }) { // ✅ Accept new props
   const [showUserMenu, setShowUserMenu] = useState(false);
 
   const menuItems = [
@@ -45,8 +44,9 @@ export default function Sidebar({ user, logoutUser }) {
     }
   ];
 
+  // ✅ Updated to use props for navigation
   const handleItemClick = (itemId) => {
-    setActiveItem(itemId);
+    onNavigate(itemId); // Call parent navigation handler
     console.log(`Navigating to: ${itemId}`);
   };
 
@@ -102,7 +102,7 @@ export default function Sidebar({ user, logoutUser }) {
                 key={item.id}
                 onClick={() => handleItemClick(item.id)}
                 className={`w-full flex items-center justify-between p-3 rounded-lg text-left transition-colors duration-200 ${
-                  activeItem === item.id
+                  activeView === item.id // ✅ Use activeView prop instead of local state
                     ? 'bg-blue-50 text-blue-700 font-medium'
                     : 'text-gray-700 hover:bg-gray-50 hover:text-gray-900'
                 }`}
@@ -139,7 +139,9 @@ export default function Sidebar({ user, logoutUser }) {
             <p className="font-medium text-gray-900 truncate">
               {user?.name || 'Loading...'}
             </p>
-            
+            <p className="text-sm text-gray-500 truncate">
+              Level {user?.level || 1}
+            </p>
           </div>
           <FiChevronDown 
             className={`w-4 h-4 text-gray-400 transition-transform duration-200 ${
@@ -159,6 +161,9 @@ export default function Sidebar({ user, logoutUser }) {
               <FiSettings className="w-4 h-4 mr-3" />
               Settings
             </button>
+            
+            {/* Divider */}
+            <div className="border-t border-gray-100 my-1"></div>
             
             {/* Logout */}
             <button
