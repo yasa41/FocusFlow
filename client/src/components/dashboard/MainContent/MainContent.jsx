@@ -1,5 +1,4 @@
 import HeroSection from "./HeroSection";
-import StatsOverview from "./StatsOverview";
 import GroupsSection from "./GroupSection";
 
 export default function MainContent({ user, tasks, groups, activity }) { // Accept props

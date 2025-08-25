@@ -318,3 +318,113 @@ export const getGroupTasks = async (req, res) => {
     });
   }
 }; 
+
+// Add to your task controller
+
+export const getMyTasks = async (req, res) => {
+  try {
+    const userId = req.user.id;
+
+    // Get all tasks assigned to the user
+    const assignedTasks = await taskModel.find({
+      assignedTo: userId
+    })
+    .populate('group', 'name description')
+    .populate('createdBy', 'name email')
+    .populate('assignedTo', 'name email')
+    .sort({ dueDate: 1, createdAt: -1 });
+
+    // Organize tasks by status
+    const organizedTasks = {
+      pending: assignedTasks.filter(task => task.status === 'pending'),
+      inProgress: assignedTasks.filter(task => task.status === 'in-progress'),
+      completed: assignedTasks.filter(task => task.status === 'completed')
+    };
+
+    // Get upcoming tasks (due within 7 days)
+    const now = new Date();
+    const weekFromNow = new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000);
+    
+    const upcomingTasks = assignedTasks.filter(task => 
+      task.dueDate && 
+      new Date(task.dueDate) >= now && 
+      new Date(task.dueDate) <= weekFromNow &&
+      task.status !== 'completed'
+    );
+
+    // Get overdue tasks
+    const overdueTasks = assignedTasks.filter(task => 
+      task.dueDate && 
+      new Date(task.dueDate) < now &&
+      task.status !== 'completed'
+    ).map(task => ({
+      ...task.toObject(),
+      daysOverdue: Math.ceil((now - new Date(task.dueDate)) / (1000 * 60 * 60 * 24))
+    }));
+
+    res.json({
+      success: true,
+      tasks: {
+        all: assignedTasks,
+        byStatus: organizedTasks,
+        upcoming: upcomingTasks,
+        overdue: overdueTasks,
+        summary: {
+          total: assignedTasks.length,
+          pending: organizedTasks.pending.length,
+          inProgress: organizedTasks.inProgress.length,
+          completed: organizedTasks.completed.length,
+          upcoming: upcomingTasks.length,
+          overdue: overdueTasks.length
+        }
+      }
+    });
+
+  } catch (error) {
+    console.error('Get my tasks error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Failed to fetch tasks'
+    });
+  }
+};
+
+export const getCreatedTasks = async (req, res) => {
+  try {
+    const userId = req.user.id;
+
+    const createdTasks = await taskModel.find({
+      createdBy: userId
+    })
+    .populate('group', 'name description')
+    .populate('assignedTo', 'name email')
+    .sort({ createdAt: -1 });
+
+    const organizedTasks = {
+      pending: createdTasks.filter(task => task.status === 'pending'),
+      inProgress: createdTasks.filter(task => task.status === 'in-progress'),
+      completed: createdTasks.filter(task => task.status === 'completed')
+    };
+
+    res.json({
+      success: true,
+      tasks: {
+        all: createdTasks,
+        byStatus: organizedTasks,
+        summary: {
+          total: createdTasks.length,
+          pending: organizedTasks.pending.length,
+          inProgress: organizedTasks.inProgress.length,
+          completed: organizedTasks.completed.length
+        }
+      }
+    });
+
+  } catch (error) {
+    console.error('Get created tasks error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Failed to fetch created tasks'
+    });
+  }
+};

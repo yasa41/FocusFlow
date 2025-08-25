@@ -1,12 +1,12 @@
 // services/api.js
 import axios from "axios";
 
-// Auth API (for login, register, logout)
+// Auth API 
 const authAPI = axios.create({
   baseURL: import.meta.env.VITE_API_AUTH, withCredentials: true,
 });
 
-// Users API (for /me, /profile,/dashboard)
+// Users API 
 const usersAPI = axios.create({
   baseURL: import.meta.env.VITE_API_USER,
   withCredentials: true,
@@ -68,7 +68,65 @@ export const getUserDashboard = () => {
   return usersAPI.get("/dashboard");
 }
 
-//group functions
-export const createGroup = () => {
-  return groupsAPI.post("/");
+// Group functions
+export const createGroup = (groupData) => {
+  return groupsAPI.post("/", groupData);
+};
+
+export const deleteGroup = (groupId) => {
+  return groupsAPI.delete(`/${groupId}/delete`);
+};
+
+export const updateGroup = (groupId, updatedData) => {
+  return groupsAPI.put(`/${groupId}/update`, updatedData);
+};
+
+export const removeMember = (groupId, userId) => {
+  return groupsAPI.delete(`/${groupId}/remove/${userId}`);
+};
+
+export const transferOwnership = (groupId, newOwnerId) => {
+  return groupsAPI.put(`/${groupId}/transfer-ownership`, { newOwnerId });
+};
+
+export const joinGroupByInvite = (inviteCode) => {
+  return groupsAPI.post("/join", { inviteCode });
+};
+
+export const getGroupDetails = (groupId) => {
+  return groupsAPI.get(`/${groupId}/details`);
+};
+
+export const leaveGroup = (groupId) => {
+  return groupsAPI.post(`/${groupId}/leave`);
+};
+
+//Task functions 
+
+export const createTask = (groupId, details) => {
+  return tasksAPI.post(`/${groupId}/`, details);
 }
+
+export const deleteTask = (taskId) => {
+  return tasksAPI.delete(`/${taskId}/delete`);
+}
+export const updateTask = (taskId, details) => {
+  return tasksAPI.put(`/${taskId}/update`, details);
+}
+export const updateTaskStatus = (taskId, status) => {
+  return tasksAPI.put(`/${taskId}/status`, { status });
+}
+
+export const getGroupTasks = (groupId) => {
+  return tasksAPI.get(`/${groupId}/group-tasks`);
+}
+
+// Get all tasks assigned to current user across all groups
+export const getMyTasks = () => {
+  return tasksAPI.get("/my-tasks");
+};
+
+// Get tasks created by current user
+export const getCreatedTasks = () => {
+  return tasksAPI.get("/created-tasks");
+};

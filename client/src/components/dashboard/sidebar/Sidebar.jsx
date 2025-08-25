@@ -7,7 +7,6 @@ import {
   FiActivity, 
   FiUser,
   FiSettings,
-  FiHelpCircle,
   FiLogOut,
   FiChevronDown
 } from 'react-icons/fi';
@@ -28,7 +27,7 @@ export default function Sidebar({ user, logoutUser, activeView, onNavigate }) { 
     },
     {
       id: 'goals',
-      label: 'Goals',
+      label: 'Tasks',
       icon: FiTarget
     },
     {

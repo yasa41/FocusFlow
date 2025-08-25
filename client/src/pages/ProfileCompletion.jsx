@@ -237,7 +237,7 @@ export default function ProfileCompletion({ userData, onComplete, onSkip }) {
                     }`}
                   >
                     <div className="relative">
-                      <div className={`w-24 h-24 rounded-3xl overflow-hidden shadow-xl transition-all duration-300 ${
+                      <div className={`w-24 h-24 rounded-full overflow-hidden shadow-xl transition-all duration-300 ${
                         selectedAvatar === index
                           ? "ring-4 ring-blue-400 ring-offset-4 shadow-2xl"
                           : "shadow-lg group-hover:shadow-2xl"
@@ -247,7 +247,7 @@ export default function ProfileCompletion({ userData, onComplete, onSkip }) {
                           alt={`Avatar ${index + 1}`}
                           className="w-full h-full object-cover"
                           onError={(e) => {
-                            // Simplified fallback without avatarNames
+                            // fallback without avatarNames
                             e.target.style.backgroundColor = '#3B82F6';
                             e.target.innerHTML = `<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;color:white;font-weight:bold;">${index + 1}</div>`;
                           }}

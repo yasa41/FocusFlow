@@ -61,8 +61,7 @@ export const getUserDashboard = async (req, res) => {
     const [user, taskStats, upcomingTasks, overdueTasks, recentActivity, completedTasksLast7Days] =
       await Promise.all([
         userModel.findById(userId)
-          .populate("groups", "name description memberCount owner")
-          .populate("ownedGroups", "name description memberCount"),
+          .populate("groups", "name description memberCount owner"),
 
         taskModel.aggregate([
           {
@@ -164,12 +163,7 @@ export const getUserDashboard = async (req, res) => {
             memberCount: group.memberCount ?? 0,
             isOwner: group.owner?.toString() === userId
           })),
-          owned: user.ownedGroups.map(group => ({
-            id: group._id,
-            name: group.name,
-            description: group.description,
-            memberCount: group.memberCount ?? 0
-          })),
+        
           summary: {
             totalGroups: user.groups.length + user.ownedGroups.length,
             ownedCount: user.ownedGroups.length,
