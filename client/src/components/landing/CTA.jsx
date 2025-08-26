@@ -14,7 +14,7 @@ const CTA = () => {
     <section className="relative py-20 px-4 sm:px-6 lg:px-8 overflow-hidden">
       <div className="max-w-4xl mx-auto">
         <div className="relative bg-blue-600 rounded-3xl p-12 md:p-16 text-center text-white shadow-2xl overflow-hidden">
-          {/* Subtle overlay */}
+        
           <div className="absolute inset-0 bg-black/5"></div>
           
           <div className="relative z-10">
@@ -26,7 +26,7 @@ const CTA = () => {
               stay motivated, and make real progress.
             </p>
             
-            {/* Single CTA Button */}
+            {/*  CTA Button */}
             <div className="flex justify-center">
               <button
                 onClick={handleGetStarted}

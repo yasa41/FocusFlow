@@ -34,7 +34,7 @@ const HowItWorks = () => {
         </div>
 
         <div className="relative">
-          {/* Connecting Line - Fixed positioning */}
+          {/* Connecting Line */}
           <div className="hidden md:block absolute top-10 left-1/2 transform -translate-x-1/2 w-2/3 h-0.5 bg-blue-300 -translate-y-1/2"></div>
           
           <div className="grid md:grid-cols-3 gap-8 relative z-10">

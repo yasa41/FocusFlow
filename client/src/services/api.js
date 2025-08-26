@@ -68,6 +68,10 @@ export const getUserDashboard = () => {
   return usersAPI.get("/dashboard");
 }
 
+export const searchUser = () => {
+  return usersAPI.get("/search");
+}
+
 // Group functions
 export const createGroup = (groupData) => {
   return groupsAPI.post("/", groupData);

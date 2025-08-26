@@ -1,4 +1,4 @@
-import { FiBook, FiMenu, FiX } from "react-icons/fi";
+import { FiActivity, FiMenu, FiX } from "react-icons/fi";
 import { useNavigate } from "react-router-dom";
 import { scrollToSection } from "../../hooks/smoothScroll";
 
@@ -20,7 +20,7 @@ const Navbar = ({ mobileMenuOpen, setMobileMenuOpen }) => {
           {/* Logo */}
           <div className="flex items-center space-x-2">
             <div className="w-10 h-10 bg-blue-600 rounded-xl flex items-center justify-center">
-              <FiBook className="w-6 h-6 text-white" />
+              <FiActivity className="w-6 h-6 text-white" />
             </div>
             <span className="text-2xl font-bold text-blue-600">FocusFlow</span>
           </div>
@@ -62,7 +62,7 @@ const Navbar = ({ mobileMenuOpen, setMobileMenuOpen }) => {
           {/* Mobile Menu Button */}
           <button
             className="md:hidden p-2 text-gray-600 hover:text-gray-900"
-            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+            onClick={() => setMobileMenuOpen(!mobileMenuOpen)} //sets it to true so that when its open it will be X or else menu icon 
           >
             {mobileMenuOpen ? (
               <FiX className="w-6 h-6" />

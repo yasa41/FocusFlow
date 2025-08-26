@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { FiZap, FiCheckCircle, FiMessageCircle, FiArrowRight, FiUsers, FiCheck, FiClock } from "react-icons/fi";
+import { FiMessageCircle, FiArrowRight, FiUsers, FiCheck, FiClock } from "react-icons/fi";
 import { AiOutlineRocket } from "react-icons/ai";
 import { useNavigate } from "react-router-dom";
 import { scrollToSection } from "../../hooks/smoothScroll";
@@ -29,7 +29,7 @@ const Hero = () => {
               isVisible ? "translate-y-0 opacity-100" : "translate-y-10 opacity-0"
             }`}
           >
-            {/* Main heading - updated for FocusFlow branding */}
+            {/* Main heading */}
             <h1 className="text-5xl lg:text-6xl font-bold text-blue-600 leading-tight mb-6">
               Focus. Collaborate. Achieve.
             </h1>
@@ -50,7 +50,7 @@ const Hero = () => {
                 <FiArrowRight className="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform" />
               </button>
 
-              {/* Fixed "See Features" button with scroll functionality */}
+              {/* See Features button with scroll functionality */}
               <button 
                 onClick={handleSeeFeatures}
                 className="flex items-center justify-center px-8 py-4 bg-white text-gray-700 font-semibold rounded-xl border-2 border-gray-200 hover:border-blue-300 hover:text-blue-600 transition-all duration-200 hover:shadow-md"
@@ -61,7 +61,7 @@ const Hero = () => {
             </div>
           </div>
 
-          {/* Dashboard Preview - updated with FocusFlow branding */}
+          {/* Dashboard Preview */}
           <div
             className={`relative transform transition-all duration-1000 delay-300 ${
               isVisible ? "translate-y-0 opacity-100" : "translate-y-10 opacity-0"

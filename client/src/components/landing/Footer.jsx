@@ -1,5 +1,5 @@
 import React from "react";
-import { FiBook } from "react-icons/fi";
+import { FiActivity } from "react-icons/fi";
 
 const Footer = () => {
   return (
@@ -9,7 +9,7 @@ const Footer = () => {
           <div className="md:col-span-2">
             <div className="flex items-center space-x-2 mb-6">
               <div className="w-10 h-10 bg-blue-600 rounded-xl flex items-center justify-center">
-                <FiBook className="w-6 h-6 text-white" />
+                <FiActivity className="w-6 h-6 text-white" />
               </div>
               <span className="text-2xl font-bold">FocusFlow</span>
             </div>

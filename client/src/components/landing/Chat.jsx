@@ -47,7 +47,7 @@ const Chat = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid lg:grid-cols-2 gap-16 items-center">
 
-          {/* Chat Demo LEFT */}
+          {/* Chat Demo */}
           <div className="lg:order-1 order-2">
             <div className="bg-white rounded-2xl shadow-2xl overflow-hidden max-w-md mx-auto lg:mx-0">
               {/* Chat Header */}
@@ -127,7 +127,7 @@ const Chat = () => {
             </div>
           </div>
 
-          {/* Text and Features RIGHT */}
+          {/* Text and Features*/}
           <div className="lg:order-2 order-1 text-left">
             <h2 className="text-4xl lg:text-5xl font-bold text-blue-600 mb-6 leading-tight">
               {displayedText}
