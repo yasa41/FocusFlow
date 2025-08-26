@@ -39,7 +39,7 @@ class SocketController {
     });
   }
   
-  // NEW: Send unread messages when user comes online
+  //  Send unread messages when user comes online
   async sendUnreadMessages(socket) {
     try {
       // Find all unread private messages for this user
@@ -54,7 +54,7 @@ class SocketController {
       if (unreadMessages.length > 0) {
         // Send them all at once
         socket.emit('unread_messages', unreadMessages);
-        console.log(`📬 Sent ${unreadMessages.length} unread messages to ${socket.userName}`);
+        console.log(` Sent ${unreadMessages.length} unread messages to ${socket.userName}`);
       }
       
     } catch (error) {
@@ -136,7 +136,7 @@ class SocketController {
         sender: socket.userId,
         recipient: data.toUserId,
         type: 'private',
-        read: false,  // 🔥 Important: Mark as unread
+        read: false,  //  Mark as unread
         replyTo: data.replyTo || null
       });
       
