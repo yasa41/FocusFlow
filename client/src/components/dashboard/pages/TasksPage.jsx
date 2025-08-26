@@ -1,8 +1,8 @@
 import  { useState, useEffect } from 'react';
 import { 
-  FiPlus, FiFilter, FiClock, FiTarget, FiCheckCircle, 
-  FiAlertCircle, FiCalendar, FiUser, FiMoreHorizontal,
-  FiTrendingUp, FiZap,  FiUsers
+   FiFilter, FiClock, FiTarget, FiCheckCircle, 
+  FiAlertCircle, 
+  FiTrendingUp, FiZap
 } from 'react-icons/fi';
 import { getMyTasks, getCreatedTasks, updateTaskStatus } from '../../../services/api';
 import { TaskModal } from '../../modals/TaskModal';

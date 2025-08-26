@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { logoutUser } from "../services/api"; // ✅ Your existing API
+import { logoutUser } from "../services/api"; 
 import Sidebar from "../components/dashboard/sidebar/Sidebar";
 import MainContent from "../components/dashboard/MainContent/MainContent";
 import GroupsPage from "../components/dashboard/pages/GroupsPage";
@@ -17,7 +17,7 @@ export default function Dashboard() {
 
   const handleLogout = async () => {
     try {
-      await logoutUser(); // ✅ Your existing API function
+      await logoutUser(); 
       localStorage.removeItem('token');
       navigate('/');
     } catch (error) {
@@ -41,13 +41,13 @@ export default function Dashboard() {
           />
         );
       case 'groups':
-        return <GroupsPage groups={dashboardData.groups} />; // ✅ Uses dashboard data
+        return <GroupsPage groups={dashboardData.groups} />; 
       case 'goals':
-        return <TasksPage tasks={dashboardData.tasks} user={dashboardData.user} />; // ✅ Uses dashboard data
+        return <TasksPage tasks={dashboardData.tasks} user={dashboardData.user} />; 
       case 'chats':
         return <ChatsPage user={dashboardData.user} />;
       case 'profile':
-        return <ProfilePage user={dashboardData.user} />; // ✅ Will use getCurrentUser() API internally
+        return <ProfilePage user={dashboardData.user} />; 
       default:
         return (
           <MainContent 

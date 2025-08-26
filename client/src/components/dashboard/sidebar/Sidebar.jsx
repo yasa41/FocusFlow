@@ -11,7 +11,7 @@ import {
   FiChevronDown
 } from 'react-icons/fi';
 
-export default function Sidebar({ user, logoutUser, activeView, onNavigate }) { // ✅ Accept new props
+export default function Sidebar({ user, logoutUser, activeView, onNavigate }) {
   const [showUserMenu, setShowUserMenu] = useState(false);
 
   const menuItems = [
@@ -43,9 +43,9 @@ export default function Sidebar({ user, logoutUser, activeView, onNavigate }) { 
     }
   ];
 
-  // ✅ Updated to use props for navigation
+
   const handleItemClick = (itemId) => {
-    onNavigate(itemId); // Call parent navigation handler
+    onNavigate(itemId); 
     console.log(`Navigating to: ${itemId}`);
   };
 
@@ -64,9 +64,6 @@ export default function Sidebar({ user, logoutUser, activeView, onNavigate }) { 
     switch(action) {
       case 'settings':
         console.log('Navigate to settings');
-        break;
-      case 'help':
-        console.log('Navigate to help');
         break;
       case 'logout':
         logoutUser(); 
@@ -101,7 +98,7 @@ export default function Sidebar({ user, logoutUser, activeView, onNavigate }) { 
                 key={item.id}
                 onClick={() => handleItemClick(item.id)}
                 className={`w-full flex items-center justify-between p-3 rounded-lg text-left transition-colors duration-200 ${
-                  activeView === item.id // ✅ Use activeView prop instead of local state
+                  activeView === item.id 
                     ? 'bg-blue-50 text-blue-700 font-medium'
                     : 'text-gray-700 hover:bg-gray-50 hover:text-gray-900'
                 }`}

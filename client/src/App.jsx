@@ -3,7 +3,7 @@ import { Routes, Route } from "react-router-dom";
 import LandingPage from "./pages/LandingPage";
 import SlidingAuth from "./pages/SlidingAuth";
 import Dashboard from "./pages/Dashboard";
-import Onboarding from "./components/Onboarding";
+import Onboarding from "./hooks/Onboarding";
 
 function App() {
   return (

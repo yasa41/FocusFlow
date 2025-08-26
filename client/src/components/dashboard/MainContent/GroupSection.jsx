@@ -20,7 +20,6 @@ export default function GroupsSection({ groups, recentTasks = [] }) {
 
   const handleCreateSuccess = (message, groupData) => {
     showToast('success', `${message} Invite code: ${groupData.inviteCode}`);
-    // You can refresh dashboard data here if needed
   };
 
   return (
@@ -53,7 +52,7 @@ export default function GroupsSection({ groups, recentTasks = [] }) {
             <GroupCard 
               key={group.id} 
               group={group} 
-              allTasks={recentTasks} // Pass the tasks data here
+              allTasks={recentTasks} 
             />
           ))}
         </div>

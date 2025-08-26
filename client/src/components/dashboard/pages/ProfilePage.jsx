@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { getCurrentUser, updateUserProfile } from '../../../services/api';
 import { 
-  FiEdit, FiMail, FiUser, FiStar, FiTrendingUp, FiAward, 
-  FiCalendar, FiTarget, FiZap, FiUsers, FiBookmark, FiHeart,
-  FiCamera, FiSave, FiX
+  FiEdit, FiMail, FiStar, FiTrendingUp, FiAward, 
+  FiCalendar, FiTarget, FiZap, FiUsers, 
+   FiSave
 } from 'react-icons/fi';
 
 export default function ProfilePage({ user }) {

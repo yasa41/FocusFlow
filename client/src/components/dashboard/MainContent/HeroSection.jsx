@@ -23,13 +23,11 @@ export default function HeroSection({ user, tasks }) {
   };
 
   const handleJoinSuccess = (message, groupData) => {
-    showToast('success', message);
-    // You can refresh dashboard data here if needed
+    showToast('success', message);  
   };
 
   const handleCreateSuccess = (message, groupData) => {
     showToast('success', `${message} Invite code: ${groupData.inviteCode}`);
-    // You can refresh dashboard data here if needed
   };
 
   return (

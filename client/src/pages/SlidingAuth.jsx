@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { loginUser, registerUser } from "../services/api"; 
 import ProfileCompletion from "./ProfileCompletion";
-import { FiArrowLeft, FiBook, FiEye, FiEyeOff} from "react-icons/fi";
+import { FiArrowLeft, FiActivity, FiEye, FiEyeOff} from "react-icons/fi";
 import { useNavigate } from "react-router-dom";
 import "./SlidingAuth.css";
 
@@ -88,7 +88,7 @@ export default function SlidingAuth() {
       <div className="absolute top-4 right-4 md:top-6 md:right-6 z-50">
         <div className="flex items-center space-x-2 px-3 py-2 md:px-4 md:py-2 bg-white/80 backdrop-blur-md rounded-full shadow-lg">
           <div className="w-6 h-6 md:w-8 md:h-8 bg-blue-600 rounded-lg flex items-center justify-center">
-            <FiBook className="w-3 h-3 md:w-4 md:h-4 text-white" />
+            <FiActivity className="w-3 h-3 md:w-4 md:h-4 text-white" />
           </div>
           <span className="text-base md:text-lg font-bold text-blue-600">FocusFlow</span>
         </div>

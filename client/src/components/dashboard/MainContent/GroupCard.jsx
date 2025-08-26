@@ -1,84 +1,27 @@
-import {  FiUsers, FiMoreHorizontal, FiTrendingUp, FiZap, FiTarget, FiStar, FiArrowRight } from "react-icons/fi";
-import { useMemo } from "react";
+import { FiUsers, FiMoreHorizontal, FiTrendingUp, FiZap, FiStar, FiArrowRight } from "react-icons/fi";
 
 export default function GroupCard({ group, allTasks = [] }) {
   
-  // Filter tasks for this specific group
-  const groupTasks = useMemo(() => {
-    return allTasks.filter(task => 
-      task.group?.id === group.id || task.group?._id === group.id
-    );
-  }, [allTasks, group.id]);
+  //task filtering and calculations
+  const groupTasks = allTasks.filter(task => 
+    task.group?.id === group.id || task.group?._id === group.id
+  );
 
-  // Calculate progress from filtered tasks
-  const progressData = useMemo(() => {
-    if (!groupTasks || groupTasks.length === 0) {
-      return { progress: 0, completed: 0, total: 0, thisWeek: 0 };
-    }
+  const totalTasks = groupTasks.length;
+  const completedTasks = groupTasks.filter(task => 
+    task.status === 'completed' || task.isCompleted
+  ).length;
 
-    const now = new Date();
-    const weekAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
-    
-    const thisWeekTasks = groupTasks.filter(task => 
-      new Date(task.updatedAt || task.createdAt) >= weekAgo
-    );
-    
-    const completedThisWeek = thisWeekTasks.filter(task => 
-      task.status === 'completed' || task.isCompleted
-    ).length;
-    
-    const totalTasks = groupTasks.length;
-    const completedTasks = groupTasks.filter(task => 
-      task.status === 'completed' || task.isCompleted
-    ).length;
-    
-    const overallProgress = totalTasks > 0 ? Math.round((completedTasks / totalTasks) * 100) : 0;
-    const weeklyProgress = thisWeekTasks.length > 0 ? Math.round((completedThisWeek / thisWeekTasks.length) * 100) : 0;
-    
-    return {
-      progress: weeklyProgress,
-      completed: completedTasks,
-      total: totalTasks,
-      thisWeek: completedThisWeek,
-      thisWeekTotal: thisWeekTasks.length,
-      overallProgress
-    };
-  }, [groupTasks]);
+  const progress = totalTasks > 0 ? Math.round((completedTasks / totalTasks) * 100) : 0;
 
-  // Get recent activity
-  const recentActivity = useMemo(() => {
-    const yesterday = new Date(Date.now() - 24 * 60 * 60 * 1000);
-    return groupTasks.filter(task => 
-      (task.status === 'completed' || task.isCompleted) && 
-      task.completedAt && 
-      new Date(task.completedAt) >= yesterday
-    ).length;
-  }, [groupTasks]);
-
-  // Dynamic gradient and colors
-  const getProgressGradient = (progress) => {
-    if (progress >= 80) return "from-emerald-400 to-cyan-400";
-    if (progress >= 60) return "from-blue-400 to-indigo-400";
-    if (progress >= 40) return "from-yellow-400 to-orange-400";
-    return "from-blue-400 to-blue-400";
-  };
-
-  const getProgressColor = (progress) => {
-    if (progress >= 80) return "text-emerald-600";
-    if (progress >= 60) return "text-blue-600";
-    if (progress >= 40) return "text-yellow-600";
-    return "text-blue-600";
-  };
-
-  const getBgGradient = (progress) => {
-    if (progress >= 80) return "from-emerald-50 to-cyan-50 border-emerald-200";
-    if (progress >= 60) return "from-blue-50 to-indigo-50 border-blue-200";
-    if (progress >= 40) return "from-yellow-50 to-orange-50 border-yellow-200";
-    return "from-blue-50 to-blue-50 border-blue-200";
-  };
+  //recent activity check
+  const recentActivity = groupTasks.some(task => 
+    task.status === 'completed' && task.completedAt && 
+    new Date(task.completedAt) > new Date(Date.now() - 24 * 60 * 60 * 1000)
+  ) ? 1 : 0;
 
   return (
-    <div className={`group relative bg-gradient-to-br ${getBgGradient(progressData.overallProgress)} border rounded-2xl p-6 transition-all duration-300 cursor-pointer hover:shadow-lg hover:-translate-y-1 overflow-hidden`}>
+    <div className="group relative bg-gradient-to-br from-blue-50 to-blue-50 border border-blue-200 rounded-2xl p-6 transition-all duration-300 cursor-pointer hover:shadow-lg hover:-translate-y-1 overflow-hidden">
       
       {/* Subtle background pattern */}
       <div className="absolute inset-0 opacity-30">
@@ -95,15 +38,12 @@ export default function GroupCard({ group, allTasks = [] }) {
       <div className="relative z-10 mb-5">
         <div className="flex items-start justify-between mb-4">
           <div className="flex items-start space-x-4 flex-1">
-            {/* Enhanced avatar with progress ring */}
             <div className="relative flex-shrink-0">
               <div className="w-14 h-14 rounded-2xl bg-white shadow-md flex items-center justify-center group-hover:shadow-lg transition-all duration-300">
-                <div className={`w-8 h-8 rounded-xl bg-gradient-to-br ${getProgressGradient(progressData.overallProgress)} flex items-center justify-center`}>
+                <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-blue-400 to-blue-400 flex items-center justify-center">
                   <FiUsers className="w-4 h-4 text-white" />
                 </div>
               </div>
-              
-             
             </div>
             
             <div className="flex-1 min-w-0">
@@ -147,22 +87,22 @@ export default function GroupCard({ group, allTasks = [] }) {
             <span className="text-sm font-semibold text-gray-700">Weekly Flow</span>
           </div>
           
-          <span className={`text-lg font-bold ${getProgressColor(progressData.progress)}`}>
-            {progressData.progress}%
+          <span className="text-lg font-bold text-blue-600">
+            {progress}%
           </span>
         </div>
         
-        {/* Progress bar */}
+        {/* Progress bar - always blue */}
         <div className="w-full bg-gray-200 rounded-full h-2 mb-2 overflow-hidden">
           <div 
-            className={`h-2 rounded-full transition-all duration-700 ease-out bg-gradient-to-r ${getProgressGradient(progressData.progress)}`}
-            style={{ width: `${progressData.progress}%` }}
+            className="h-2 rounded-full transition-all duration-700 ease-out bg-blue-500"
+            style={{ width: `${progress}%` }}
           />
         </div>
         
         <div className="flex justify-between text-xs text-gray-500">
           <span>This week's focus</span>
-          <span className="font-medium">{progressData.thisWeek}/{progressData.thisWeekTotal} completed</span>
+          <span className="font-medium">{completedTasks}/{totalTasks} completed</span>
         </div>
       </div>
 
@@ -172,14 +112,14 @@ export default function GroupCard({ group, allTasks = [] }) {
           <div className="flex items-center space-x-2 text-gray-600">
             <FiUsers className="w-4 h-4" />
             <span className="text-sm font-medium">
-              {group.memberCount} member{group.memberCount !== 1 ? 's' : ''}
+              {group.memberCount || 0} member{group.memberCount !== 1 ? 's' : ''}
             </span>
           </div>
           
           <div className="flex items-center space-x-2 text-gray-600">
-            <div className={`w-3 h-3 rounded-full bg-gradient-to-r ${getProgressGradient(progressData.overallProgress)}`} />
+            <div className="w-3 h-3 rounded-full bg-blue-500" />
             <span className="text-sm font-medium">
-              {progressData.completed}/{progressData.total} total
+              {completedTasks}/{totalTasks} total
             </span>
           </div>
         </div>

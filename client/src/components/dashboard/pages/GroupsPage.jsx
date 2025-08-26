@@ -1,6 +1,6 @@
 import React from 'react';
-import GroupCard from '../MainContent/GroupCard'; // ✅ Reuse existing component
-import { createGroup } from '../../../services/api'; // ✅ Your existing API
+import GroupCard from '../MainContent/GroupCard'; 
+import { createGroup } from '../../../services/api'; 
 import { FiPlus, FiGrid } from 'react-icons/fi';
 
 export default function GroupsPage({ groups }) {
@@ -8,9 +8,8 @@ export default function GroupsPage({ groups }) {
 
   const handleCreateGroup = async () => {
     try {
-      const response = await createGroup(); // ✅ Your existing API function
+      const response = await createGroup(); 
       console.log('Group created:', response.data);
-      // You might want to refresh dashboard data here
     } catch (error) {
       console.error('Failed to create group:', error);
     }
@@ -50,7 +49,7 @@ export default function GroupsPage({ groups }) {
         ) : (
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
             {allGroups.map(group => (
-              <GroupCard key={group.id} group={group} /> // ✅ Reuses your existing component
+              <GroupCard key={group.id} group={group} /> 
             ))}
           </div>
         )}
