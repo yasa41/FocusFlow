@@ -5,51 +5,51 @@ import groupModel from '../models/groupModel.js';
 
 
 export const updateProfile = async (req, res) => {
-    try {
-        const { avatar, bio, interests } = req.body;
-        const userId = req.user.id;
+  try {
+    const { avatar, bio, interests } = req.body;
+    const userId = req.user.id;
 
-        const user = await userModel.findByIdAndUpdate(
-            userId,
-            {
-                avatar,
-                bio,
-                interests,
-            },
-            { new: true, runValidators: true }
-        ).select('-password -resetPasswordToken -resetPasswordExpire');
+    const user = await userModel.findByIdAndUpdate(
+      userId,
+      {
+        avatar,
+        bio,
+        interests,
+      },
+      { new: true, runValidators: true }
+    ).select('-password -resetPasswordToken -resetPasswordExpire');
 
-        if (!user) {
-            return res.json({ success: false, message: "User not found" });
-        }
-
-        return res.json({
-            success: true,
-            message: "Profile updated successfully",
-            user
-        });
-    } catch (error) {
-        console.error('Profile update error:', error);
-        return res.json({ success: false, message: error.message });
+    if (!user) {
+      return res.json({ success: false, message: "User not found" });
     }
+
+    return res.json({
+      success: true,
+      message: "Profile updated successfully",
+      user
+    });
+  } catch (error) {
+    console.error('Profile update error:', error);
+    return res.json({ success: false, message: error.message });
+  }
 };
 
 export const getCurrentUser = async (req, res) => {
-    try {
-        const user = await userModel.findById(req.user.id)
-            .select('-password -resetPasswordToken -resetPasswordExpire');
+  try {
+    const user = await userModel.findById(req.user.id)
+      .select('-password -resetPasswordToken -resetPasswordExpire');
 
-        if (!user) {
-            return res.json({ success: false, message: "User not found" });
-        }
-
-        return res.json({
-            success: true,
-            user
-        });
-    } catch (error) {
-        return res.json({ success: false, message: error.message });
+    if (!user) {
+      return res.json({ success: false, message: "User not found" });
     }
+
+    return res.json({
+      success: true,
+      user
+    });
+  } catch (error) {
+    return res.json({ success: false, message: error.message });
+  }
 };
 
 
@@ -153,7 +153,7 @@ export const getUserDashboard = async (req, res) => {
           totalPoints: user.totalPoints ?? 0,
           currentStreak: user.currentStreak ?? 0,
           level: user.level ?? 1,
-          avatar:user.avatar
+          avatar: user.avatar
         },
         groups: {
           memberOf: user.groups.map(group => ({
@@ -163,7 +163,7 @@ export const getUserDashboard = async (req, res) => {
             memberCount: group.memberCount ?? 0,
             isOwner: group.owner?.toString() === userId
           })),
-        
+
           summary: {
             totalGroups: user.groups.length + user.ownedGroups.length,
             ownedCount: user.ownedGroups.length,
@@ -186,9 +186,9 @@ export const getUserDashboard = async (req, res) => {
             subject: task.subject,
             group: task.group
               ? {
-                  id: task.group._id,
-                  name: task.group.name
-                }
+                id: task.group._id,
+                name: task.group.name
+              }
               : null,
             daysUntilDue: Math.ceil(
               (task.dueDate - new Date()) / (1000 * 60 * 60 * 24)
@@ -201,9 +201,9 @@ export const getUserDashboard = async (req, res) => {
             priority: task.priority,
             group: task.group
               ? {
-                  id: task.group._id,
-                  name: task.group.name
-                }
+                id: task.group._id,
+                name: task.group.name
+              }
               : null,
             daysOverdue: Math.ceil(
               (new Date() - task.dueDate) / (1000 * 60 * 60 * 24)
@@ -233,5 +233,30 @@ export const getUserDashboard = async (req, res) => {
       success: false,
       message: "Failed to load dashboard"
     });
+  }
+};
+
+export const searchUser = async (req, res) => {
+  try {
+    const { query } = req.query;
+    
+    if (!query) {
+      return res.json({ success: false, message: "Search query required" });
+    }
+
+    const users = await userModel
+      .find({
+        name: { $regex: query, $options: 'i' }
+      })
+      .select('name email avatar')
+      .limit(10);
+
+    return res.json({
+      success: true,
+      users
+    });
+
+  } catch (error) {
+    return res.json({ success: false, message: error.message });
   }
 };
