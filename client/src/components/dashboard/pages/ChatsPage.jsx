@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import useChat from "../../../hooks/UseChatData";
 
 export default function ChatsPage({ user }) {
@@ -16,16 +16,26 @@ export default function ChatsPage({ user }) {
   } = useChat();
 
   const [search, setSearch] = useState("");
+  const [debouncedSearch, setDebouncedSearch] = useState(search);
   const [messageInput, setMessageInput] = useState("");
+  const [showSearchDropdown, setShowSearchDropdown] = useState(false);
+
+  useEffect(() => {
+    const handler = setTimeout(() => setDebouncedSearch(search), 300);
+    return () => clearTimeout(handler);
+  }, [search]);
+
+  useEffect(() => {
+    if (debouncedSearch.trim()) {
+      searchUsers(debouncedSearch);
+      setShowSearchDropdown(true);
+    } else {
+      setShowSearchDropdown(false);
+    }
+  }, [debouncedSearch, searchUsers]);
 
   const handleSearch = (e) => {
-    const q = e.target.value;
-    setSearch(q);
-    if (q.trim() === "") {
-      setSearchResults([]);
-    } else {
-      searchUsers(q);
-    }
+    setSearch(e.target.value);
   };
 
   const getId = (field) => {
@@ -34,25 +44,53 @@ export default function ChatsPage({ user }) {
     return String(field).trim();
   };
 
+  // Helper to resolve sender name for private messages
+  const getSenderName = (msg) => {
+    // My messages
+    const senderId =
+      typeof msg.sender === "object"
+        ? msg.sender.id || msg.sender._id
+        : msg.sender;
+    if (senderId === user.id) return "You";
+
+    // Incoming private messages: lookup sender in conversations if possible
+    if (!activeChat?.isGroup) {
+      // Is sender my chat partner?
+      if (activeChat && getId(activeChat) === senderId) {
+        return activeChat.name;
+      }
+      // Search conversations list for name
+      const found = conversations.find(
+        (c) => getId(c) === senderId
+      );
+      if (found) return found.name;
+    }
+    // Fallback to .name property if present (for group messages)
+    return msg.sender?.name || "Unknown";
+  };
+
   const filteredMessages = messages.filter((msg) => {
     if (!activeChat) return false;
 
-    const myId = String(user.id).trim();
-    const chatId = String(activeChat._id).trim();
+    if (activeChat.isGroup) {
+      return msg.group === activeChat._id && msg.type === "group";
+    } else {
+      const myId = String(user.id).trim();
+      const chatId = String(activeChat._id).trim();
 
-    const senderId = getId(msg.sender);
-    const recipientId = getId(msg.recipient);
+      const senderId = getId(msg.sender);
+      const recipientId = getId(msg.recipient);
 
-    return (
-      (senderId === myId && recipientId === chatId) ||
-      (senderId === chatId && recipientId === myId)
-    );
+      return (
+        (senderId === myId && recipientId === chatId) ||
+        (senderId === chatId && recipientId === myId)
+      );
+    }
   });
 
   const handleSendMessage = () => {
     if (!messageInput.trim() || !activeChat) return;
 
-    // Optimistic UI update
     addLocalMessage(
       messageInput.trim(),
       { id: user.id, name: user.name },
@@ -61,14 +99,13 @@ export default function ChatsPage({ user }) {
     );
 
     sendMessage(messageInput.trim());
-
     setMessageInput("");
   };
 
   return (
     <div className="flex w-screen h-screen bg-white">
       {/* Sidebar */}
-      <div className="w-80 border-r bg-white flex flex-col">
+      <div className="w-80 border-r bg-white flex flex-col relative">
         <input
           type="text"
           value={search}
@@ -78,38 +115,45 @@ export default function ChatsPage({ user }) {
           style={{ borderColor: "#2563eb" }}
           autoComplete="off"
         />
-        {search && searchResults.length > 0 && (
-          <div className="mb-4 px-2 overflow-auto max-h-60">
-            <h4 className="font-semibold mb-2 text-blue-600">Search Results</h4>
+
+        {showSearchDropdown && searchResults.length > 0 && (
+          <div
+            className="absolute top-16 left-0 w-full z-10 bg-white border border-blue-200 rounded shadow-md"
+            style={{ maxHeight: "250px", overflowY: "auto" }}
+            onMouseDown={(e) => e.preventDefault()}
+          >
             <ul>
-              {searchResults
-                .slice(0, 50)
-                .map((u) => (
+              {searchResults.map((u) => {
+                const existingChat = conversations.find(
+                  (c) => getId(c) === u._id
+                );
+                return (
                   <li
-                    key={u.id}
+                    key={u._id}
                     className="cursor-pointer p-2 hover:bg-blue-50 rounded"
                     onClick={() => {
-                      const existing = conversations.find(
-                        (c) => c._id === u.id || c.id === u.id
-                      );
-                      if (existing) {
-                        setActiveChat(existing);
+                      if (existingChat) {
+                        setActiveChat(existingChat);
                       } else {
                         startChatWithUser(u);
                       }
+                      setSearch(""); // clear input
+                      setShowSearchDropdown(false); // hide dropdown
                     }}
                   >
                     <span className="text-blue-600">{u.name}</span>
                   </li>
-                ))}
+                );
+              })}
             </ul>
           </div>
         )}
+
         <div className="px-2 overflow-auto flex-1">
           <h4 className="font-semibold mt-2 mb-2 text-blue-600">Chats</h4>
           <ul>
             {conversations
-              .filter((c) => c._id !== user.id)
+              .filter((c) => getId(c) !== user.id)
               .map((chat) => (
                 <li
                   key={chat._id}
@@ -142,6 +186,7 @@ export default function ChatsPage({ user }) {
           </ul>
         </div>
       </div>
+
       {/* Chat Panel */}
       <div className="flex-1 flex flex-col bg-gray-50" style={{ minHeight: "100vh" }}>
         <div className="p-4 border-b flex items-center" style={{ borderColor: "#2563eb" }}>
@@ -158,12 +203,8 @@ export default function ChatsPage({ user }) {
             <div className="text-gray-400 mt-8">No messages yet. Say hello!</div>
           ) : (
             filteredMessages.map((msg) => {
-              const senderId =
-                typeof msg.sender === "object"
-                  ? msg.sender.id || msg.sender._id
-                  : msg.sender;
+              const senderId = getId(msg.sender);
               const isSenderMe = senderId === user.id;
-
               return (
                 <div
                   key={msg._id}
@@ -175,7 +216,7 @@ export default function ChatsPage({ user }) {
                     }`}
                   >
                     <span className="font-medium">
-                      {isSenderMe ? "You" : msg.sender?.name || "Unknown"}
+                      {getSenderName(msg)}
                     </span>
                     {": "} {msg.content}
                   </div>

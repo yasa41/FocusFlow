@@ -100,7 +100,9 @@ export const getGroupMessages = async (req, res) => {
     const messages = await messageModel.find({
       type: 'group',
       group: groupId
-    }).sort({ createdAt: 1 });
+    }).sort({ createdAt: 1 })
+    .populate('sender', '_id name email');
+    
     res.json({ success: true, messages });
   } catch (err) {
     res.status(500).json({ success: false, message: err.message });
