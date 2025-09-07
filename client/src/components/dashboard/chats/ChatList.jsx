@@ -18,7 +18,7 @@ export default function ChatList({
   };
 
   return (
-    <aside className="w-80 border-r border-gray-300 bg-gray-50 flex flex-col p-4 overflow-y-auto">
+    <aside className="w-80 flex-shrink-0 border-r border-gray-300 bg-gray-50 flex flex-col p-4 overflow-y-auto h-full">
       <input
         type="text"
         placeholder="Search users..."
@@ -41,7 +41,8 @@ export default function ChatList({
                   setQuery("");
                 }}
               >
-                {user.name} <span className="text-gray-500 text-sm">({user.email})</span>
+                {user.name}{" "}
+                <span className="text-gray-500 text-sm">({user.email})</span>
               </div>
             ))}
           </div>

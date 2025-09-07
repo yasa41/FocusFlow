@@ -16,7 +16,7 @@ export default function ChatWindow({ activeChat, messages, sendMessage }) {
   };
 
   return (
-    <div className="flex flex-col h-full p-6">
+    <div className="flex flex-col h-full p-6 min-w-0">
       <header className="border-b border-gray-200 pb-3 mb-3 text-xl font-semibold">
         {activeChat.name}
       </header>
@@ -30,7 +30,9 @@ export default function ChatWindow({ activeChat, messages, sendMessage }) {
             <div
               key={idx}
               className={`max-w-xs p-2 rounded ${
-                isSelf ? "bg-blue-600 text-white self-end" : "bg-white text-gray-900 self-start"
+                isSelf
+                  ? "bg-blue-600 text-white self-end"
+                  : "bg-white text-gray-900 self-start"
               }`}
             >
               {msg.content}
