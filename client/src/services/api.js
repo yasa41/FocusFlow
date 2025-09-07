@@ -24,6 +24,11 @@ const tasksAPI = axios.create({
   withCredentials: true,
 });
 
+const messagesAPI = axios.create({
+  baseURL: import.meta.env.VITE_API_MESSAGE,
+  withCredentials: true,
+});
+
 // Response interceptor for all APIs
 const handleResponse = (response) => response;
 const handleError = (error) => {
@@ -39,6 +44,8 @@ authAPI.interceptors.response.use(handleResponse, handleError);
 usersAPI.interceptors.response.use(handleResponse, handleError);
 groupsAPI.interceptors.response.use(handleResponse, handleError);
 tasksAPI.interceptors.response.use(handleResponse, handleError);
+messagesAPI.interceptors.response.use(handleResponse, handleError);
+
 
 
 
@@ -68,9 +75,10 @@ export const getUserDashboard = () => {
   return usersAPI.get("/dashboard");
 }
 
-export const searchUser = () => {
-  return usersAPI.get("/search");
-}
+export const searchUser = (query) => {
+  return usersAPI.get(`/search?query=${encodeURIComponent(query)}`);
+};
+
 
 // Group functions
 export const createGroup = (groupData) => {
@@ -125,12 +133,33 @@ export const getGroupTasks = (groupId) => {
   return tasksAPI.get(`/${groupId}/group-tasks`);
 }
 
-// Get all tasks assigned to current user across all groups
 export const getMyTasks = () => {
   return tasksAPI.get("/my-tasks");
 };
 
-// Get tasks created by current user
 export const getCreatedTasks = () => {
   return tasksAPI.get("/created-tasks");
 };
+
+//Messages functions
+
+export const getMyConversations = async () => {
+  const res = await messagesAPI.get('/my-conversations');
+  return res.data;
+};
+
+export const getMyGroups = async () => {
+  const res = await messagesAPI.get('/my-groups');
+  return res.data;
+};
+
+export const getPrivateMessages = async (userId) => {
+  const res = await messagesAPI.get(`/private/${userId}`);
+  return res.data;
+};
+
+export const getGroupMessages = async (groupId) => {
+  const res = await messagesAPI.get(`/group/${groupId}`);
+  return res.data;
+};
+

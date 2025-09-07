@@ -11,6 +11,7 @@ import authRouter from "./routes/authRoutes.js";
 import userRouter from './routes/userRoutes.js';
 import groupRouter from './routes/groupRoutes.js';
 import taskRouter from './routes/taskRoutes.js';
+import messageRouter from './routes/messageRoutes.js';
 
 //socket 
 import { verifySocketToken } from "./middleware/socketAuth.js";
@@ -45,6 +46,7 @@ app.use("/api/auth", authRouter);
 app.use("/api/user", userRouter);
 app.use("/api/groups", groupRouter);
 app.use("/api/tasks", taskRouter);
+app.use("/api/messages",messageRouter);
 
 app.get("/", (req, res) => {
   res.send(" StudySync API is running...");
