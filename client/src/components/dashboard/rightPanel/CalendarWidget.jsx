@@ -1,116 +1,70 @@
-import { useState } from 'react';
+import React, { useState } from "react";
 
 export default function CalendarWidget() {
   const [currentDate, setCurrentDate] = useState(new Date());
-  
+
   const monthNames = [
-    "January", "February", "March", "April", "May", "June",
-    "July", "August", "September", "October", "November", "December"
+    "January","February","March","April","May","June",
+    "July","August","September","October","November","December"
   ];
-  
-  const daysOfWeek = ['S', 'M', 'T', 'W', 'T', 'F', 'S'];
-  
-  // Get calendar data
+
+  const daysOfWeek = ["Sun","Mon","Tue","Wed","Thu","Fri","Sat"];
+
   const year = currentDate.getFullYear();
   const month = currentDate.getMonth();
-  const today = new Date().getDate();
-  const isCurrentMonth = new Date().getMonth() === month && new Date().getFullYear() === year;
-  
+
+  const today = new Date();
+  const isCurrentMonth = today.getMonth() === month && today.getFullYear() === year;
+  const todayDate = today.getDate();
+
   const firstDayOfMonth = new Date(year, month, 1).getDay();
   const daysInMonth = new Date(year, month + 1, 0).getDate();
-  
-  // Important dates (mock data)
-  const importantDates = {
-    15: { type: 'deadline', title: 'CS Project Due' },
-    22: { type: 'study', title: 'Group Study Session' },
-    28: { type: 'exam', title: 'Midterm Exam' }
+
+  const navigateMonth = (dir) => {
+    setCurrentDate(new Date(year, month + dir, 1));
   };
-  
-  const navigateMonth = (direction) => {
-    setCurrentDate(new Date(year, month + direction, 1));
-  };
-  
+
   const getDayClasses = (day) => {
-    let classes = "w-8 h-8 flex items-center justify-center text-sm rounded-lg cursor-pointer transition-all duration-200 ";
-    
-    if (isCurrentMonth && day === today) {
-      classes += "bg-purple-600 text-white font-bold ";
-    } else if (importantDates[day]) {
-      const type = importantDates[day].type;
-      if (type === 'deadline') classes += "bg-red-100 text-red-600 font-medium ";
-      else if (type === 'study') classes += "bg-blue-100 text-blue-600 font-medium ";
-      else if (type === 'exam') classes += "bg-orange-100 text-orange-600 font-medium ";
-    } else {
-      classes += "hover:bg-gray-100 text-gray-700 ";
+    let base = "w-10 h-10 flex items-center justify-center rounded-lg text-sm cursor-pointer select-none ";
+    if(isCurrentMonth && day === todayDate) {
+      return base + "bg-blue-600 text-white font-semibold shadow-lg";
     }
-    
-    return classes;
+    return base + "hover:bg-gray-200 text-gray-700";
   };
 
   return (
-    <div className="bg-white border border-gray-200 rounded-xl p-4">
-      {/* Calendar Header */}
-      <div className="flex items-center justify-between mb-4">
-        <h3 className="font-semibold text-gray-800">
-          {monthNames[month]} {year}
-        </h3>
-        <div className="flex items-center space-x-1">
-          <button 
-            onClick={() => navigateMonth(-1)}
-            className="p-1 hover:bg-gray-100 rounded transition-colors"
-          >
-            ⟨
-          </button>
-          <button 
-            onClick={() => navigateMonth(1)}
-            className="p-1 hover:bg-gray-100 rounded transition-colors"
-          >
-            ⟩
-          </button>
-        </div>
+    <div className="max-w-sm w-full bg-white rounded-xl shadow p-6">
+      {/* Header */}
+      <div className="flex justify-between items-center mb-4">
+        <button aria-label="Previous month" onClick={() => navigateMonth(-1)} className="p-2 rounded hover:bg-gray-100">
+          ‹
+        </button>
+        <div className="font-semibold text-lg text-gray-900">{monthNames[month]} {year}</div>
+        <button aria-label="Next month" onClick={() => navigateMonth(1)} className="p-2 rounded hover:bg-gray-100">
+          ›
+        </button>
       </div>
-      
-      {/* Days of Week */}
-      <div className="grid grid-cols-7 gap-1 mb-2">
-        {daysOfWeek.map((day, index) => (
-          <div key={index} className="text-center text-xs font-medium text-gray-500 h-6 flex items-center justify-center">
-            {day}
-          </div>
+
+      {/* Days of the week */}
+      <div className="grid grid-cols-7 gap-1 text-center text-xs font-semibold text-gray-500">
+        {daysOfWeek.map(day => (
+          <div key={day}>{day}</div>
         ))}
       </div>
-      
-      {/* Calendar Grid */}
-      <div className="grid grid-cols-7 gap-1">
-        {/* Empty cells for days before month starts */}
-        {Array(firstDayOfMonth).fill(null).map((_, index) => (
-          <div key={`empty-${index}`} className="w-8 h-8"></div>
+
+      {/* Dates */}
+      <div className="grid grid-cols-7 gap-1 text-center mt-2">
+        {Array(firstDayOfMonth).fill(null).map((_, idx) => (
+          <div key={"empty-" + idx} />
         ))}
-        
-        {/* Days of the month */}
-        {Array(daysInMonth).fill(null).map((_, index) => {
-          const day = index + 1;
+        {Array(daysInMonth).fill(null).map((_, idx) => {
+          const day = idx + 1;
           return (
-            <div key={day} className={getDayClasses(day)} title={importantDates[day]?.title}>
+            <button key={day} type="button" className={getDayClasses(day)} aria-current={isCurrentMonth && day === todayDate ? "date" : undefined}>
               {day}
-            </div>
-          );
+            </button>
+          )
         })}
-      </div>
-      
-      {/* Legend */}
-      <div className="mt-4 space-y-1">
-        <div className="flex items-center space-x-2 text-xs">
-          <div className="w-3 h-3 bg-red-100 rounded"></div>
-          <span className="text-gray-600">Deadlines</span>
-        </div>
-        <div className="flex items-center space-x-2 text-xs">
-          <div className="w-3 h-3 bg-blue-100 rounded"></div>
-          <span className="text-gray-600">Study Sessions</span>
-        </div>
-        <div className="flex items-center space-x-2 text-xs">
-          <div className="w-3 h-3 bg-orange-100 rounded"></div>
-          <span className="text-gray-600">Exams</span>
-        </div>
       </div>
     </div>
   );
