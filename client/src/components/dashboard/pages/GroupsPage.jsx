@@ -24,7 +24,6 @@ export default function GroupsPage({ groups }) {
             <p className="text-gray-600 mt-2">Manage and join study groups • {allGroups.length} groups</p>
           </div>
           <button 
-            onClick={handleCreateGroup}
             className="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 flex items-center space-x-2"
           >
             <FiPlus className="w-5 h-5" />

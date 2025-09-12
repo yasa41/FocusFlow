@@ -377,19 +377,37 @@ export const getGroupDetails = async (req, res) => {
     const groupId = req.params.id;
     const userId = req.user.id;
 
-    const group = await groupModel.findById(groupId);
+    // Populate members with desired fields (adjust as per your User schema)
+    const group = await groupModel
+      .findById(groupId)
+      .populate({
+        path: "members",
+        select: "name avatar email", // Include whatever fields are needed
+      })
+      .exec();
 
     if (!group) {
-      return res.status(404).json({ success: false, message: 'Group not found' });
+      return res.status(404).json({ success: false, message: "Group not found" });
     }
 
-    // Check if user is a member
+    // Check if user is a member or owner
     const isOwner = group.owner.toString() === userId;
-    const isMember = group.members.includes(userId);
+    const isMember = group.members.some((m) =>
+      typeof m === "object" ? m._id.toString() === userId : m.toString() === userId
+    );
 
     if (!isOwner && !isMember) {
-      return res.status(403).json({ success: false, message: 'Access denied' });
+      return res.status(403).json({ success: false, message: "Access denied" });
     }
+
+    // Format members as needed
+    const formattedMembers = group.members.map((m) => ({
+      userId: m._id,
+      name: m.name,
+      avatar: m.avatar,
+      email: m.email,
+      isOwner: group.owner.toString() === m._id.toString(),
+    }));
 
     res.json({
       success: true,
@@ -399,15 +417,18 @@ export const getGroupDetails = async (req, res) => {
         description: group.description,
         memberCount: group.members.length,
         isOwner,
-
         inviteCode: isOwner ? group.inviteCode : undefined,
-        createdAt: group.createdAt
-      }
+        createdAt: group.createdAt,
+        members: formattedMembers,
+        owner: group.owner, // optionally include owner id if needed
+      },
     });
   } catch (error) {
-    res.status(500).json({ success: false, message: 'Server error' });
+    console.error("Error in getGroupDetails:", error);
+    res.status(500).json({ success: false, message: "Server error" });
   }
 };
+
 
 export const leaveGroup = async (req, res) => {
   try {

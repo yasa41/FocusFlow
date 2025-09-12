@@ -8,7 +8,6 @@ export default function GroupsSection({ groups, recentTasks = [] }) {
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [toast, setToast] = useState({ show: false, type: 'success', message: '' });
 
-  // Use real API data - combine owned and member groups
   const allGroups = [
     ...(groups?.memberOf || []),
     ...(groups?.owned || [])

@@ -8,6 +8,7 @@ import {
   createTask,
   deleteTask,
   updateTask,
+  deleteGroup,
   updateTaskStatus,
   removeMember,
   transferOwnership,
@@ -84,7 +85,7 @@ export function useGroupRoom() {
       const res = await leaveGroup(groupId);
       console.log("[useGroupRoom] leaveGroup response:", res);
       if (res.data.success) {
-        navigate("/dashboard/groups");
+        navigate("/dashboard");
       }
       return res.data;
     } catch (err) {
@@ -172,6 +173,29 @@ export function useGroupRoom() {
       return { success: false, message: err.message };
     }
   };
+ 
+  // Delete group
+const handleDeleteGroup = async () => {
+  if (!group) {
+    return { success: false, message: 'Group data not loaded' };
+  }
+  const confirmed = window.confirm("Are you sure you want to delete the group? This action cannot be undone.");
+  if (!confirmed) return { success: false, message: 'Delete cancelled' };
+
+  try {
+    const res = await deleteGroup(group.id);
+    console.log("Deleting group id:", groupId);
+
+    if (res.data.success) {
+      // You may want to redirect away after deletion, e.g. to dashboard
+      navigate('/dashboard');
+    }
+    return res.data;
+  } catch (err) {
+    console.error("deleteGroup error:", err);
+    return { success: false, message: err.message || 'Failed to delete group' };
+  }
+};
 
   // Transfer ownership
   const handleTransferOwnership = async (newOwnerId) => {
@@ -207,5 +231,6 @@ export function useGroupRoom() {
     handleUpdateTaskStatus,
     handleRemoveMember,
     handleTransferOwnership,
+     handleDeleteGroup
   };
 }
