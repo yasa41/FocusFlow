@@ -46,7 +46,6 @@ const userSchema = new mongoose.Schema({
 
 
 },
-  // Adds timestamps for created and updates
   {
     timestamps: true
   });

@@ -54,12 +54,12 @@ const taskSchema = new mongoose.Schema({
     maxlength: 50 
   },
   estimatedTime: { 
-    type: Number, // in days
+    type: Number, 
     min: 0,
     max: 1440 // 24 hours max
   },
   actualTimeSpent: { 
-    type: Number, // in days
+    type: Number, 
     default: 0 
   },
 

@@ -1,7 +1,5 @@
 import messageModel from '../models/messageModel.js';
 import groupModel from '../models/groupModel.js';
-
-// Get all private conversations
 import mongoose from 'mongoose';
 
 export const getMyConversations = async (req, res) => {

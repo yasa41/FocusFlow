@@ -27,7 +27,7 @@ const groupSchema = new mongoose.Schema({
         ref: 'User'
     }],
 
-    // Easy joining
+    // Invite code to join group
     inviteCode: {
         type: String,
         unique: true,

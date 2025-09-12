@@ -1,7 +1,7 @@
 import mongoose from 'mongoose';
 
 const messageSchema = new mongoose.Schema({
-    // What the user typed
+    // What content 
     content: {
         type: String,
         required: true,

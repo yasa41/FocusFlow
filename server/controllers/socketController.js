@@ -49,10 +49,9 @@ class SocketController {
           read: false
         })
         .populate('sender', 'name email')
-        .sort({ createdAt: 1 }); // Oldest first
+        .sort({ createdAt: 1 }); 
       
       if (unreadMessages.length > 0) {
-        // Send them all at once
         socket.emit('unread_messages', unreadMessages);
         console.log(` Sent ${unreadMessages.length} unread messages to ${socket.userName}`);
       }
@@ -68,7 +67,6 @@ class SocketController {
     try {
       const { fromUserId } = data;
       
-      // Mark all messages from specific user as read
       await messageModel.updateMany(
         { 
           recipient: socket.userId,
@@ -136,7 +134,7 @@ class SocketController {
         sender: socket.userId,
         recipient: data.toUserId,
         type: 'private',
-        read: false,  //  Mark as unread
+        read: false, 
         replyTo: data.replyTo || null
       });
       
@@ -215,7 +213,7 @@ class SocketController {
         createdAt: message.createdAt
       };
       
-      // Send to all group members (including sender)
+      // Send to all group members 
       io.to(`group_${data.groupId}`).emit('group_message_received', messageData);
       
       console.log(` Group: ${socket.userName} → ${group.name}`);

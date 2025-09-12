@@ -382,7 +382,7 @@ export const getGroupDetails = async (req, res) => {
       .findById(groupId)
       .populate({
         path: "members",
-        select: "name avatar email", // Include whatever fields are needed
+        select: "name avatar email", 
       })
       .exec();
 
@@ -420,7 +420,7 @@ export const getGroupDetails = async (req, res) => {
         inviteCode: isOwner ? group.inviteCode : undefined,
         createdAt: group.createdAt,
         members: formattedMembers,
-        owner: group.owner, // optionally include owner id if needed
+        owner: group.owner, 
       },
     });
   } catch (error) {

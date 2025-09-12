@@ -57,7 +57,6 @@ export const getUserDashboard = async (req, res) => {
   try {
     const userId = req.user.id;
 
-    // Run queries in parallel for performance
     const [user, taskStats, upcomingTasks, overdueTasks, recentActivity, completedTasksLast7Days] =
       await Promise.all([
         userModel.findById(userId)
@@ -167,7 +166,7 @@ export const getUserDashboard = async (req, res) => {
           summary: {
             totalGroups: user.groups.length + user.ownedGroups.length,
             ownedCount: user.ownedGroups.length,
-            memberOfCount: user.groups.length // renamed for clarity
+            memberOfCount: user.groups.length 
           }
         },
         tasks: {
@@ -222,7 +221,7 @@ export const getUserDashboard = async (req, res) => {
           })),
           weeklyProgress: {
             completedTasks: completedTasksLast7Days,
-            studyStreak: Math.min(completedTasksLast7Days, 7) // simplified streak
+            studyStreak: Math.min(completedTasksLast7Days, 7) 
           }
         }
       }
