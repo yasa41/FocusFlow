@@ -137,8 +137,8 @@ export default function ChatsPage({ user }) {
                       } else {
                         startChatWithUser(u);
                       }
-                      setSearch(""); // clear input
-                      setShowSearchDropdown(false); // hide dropdown
+                      setSearch(""); 
+                      setShowSearchDropdown(false); 
                     }}
                   >
                     <span className="text-blue-600">{u.name}</span>

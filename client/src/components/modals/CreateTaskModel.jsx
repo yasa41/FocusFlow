@@ -4,18 +4,13 @@ import { FaTimes } from "react-icons/fa";
 export default function Modal({ isOpen, onClose, children, title }) {
   useEffect(() => {
     if (!isOpen) return;
-
-    console.log("[Modal] Opened:", title);
-
     const handleKeyDown = (e) => {
       if (e.key === "Escape") {
-        console.log("[Modal] Closed with Escape key");
         onClose();
       }
     };
     document.addEventListener("keydown", handleKeyDown);
     return () => {
-      console.log("[Modal] Cleanup event listener");
       document.removeEventListener("keydown", handleKeyDown);
     };
   }, [isOpen, onClose, title]);
@@ -27,7 +22,6 @@ export default function Modal({ isOpen, onClose, children, title }) {
       <div
         className="fixed inset-0 bg-black bg-opacity-50 z-40"
         onClick={() => {
-          console.log("[Modal] Backdrop clicked, closing modal");
           onClose();
         }}
         aria-hidden="true"
@@ -42,7 +36,6 @@ export default function Modal({ isOpen, onClose, children, title }) {
           <h2 className="text-2xl font-bold">{title}</h2>
           <button
             onClick={() => {
-              console.log("[Modal] Close button clicked");
               onClose();
             }}
             aria-label="Close modal"

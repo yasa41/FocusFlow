@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import { FiCheck, FiX, FiAlertCircle } from 'react-icons/fi';
 
-export default function Toast({ type = 'success', message, isVisible, onClose, duration = 3000 }) {
+export default function Toast({ type = 'success', message, isVisible, onClose, duration = 5000 }) {
   useEffect(() => {
     if (isVisible) {
       const timer = setTimeout(() => {

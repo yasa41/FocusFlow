@@ -46,7 +46,6 @@ export default function Sidebar({ user, logoutUser, activeView, onNavigate }) {
 
   const handleItemClick = (itemId) => {
     onNavigate(itemId); 
-    console.log(`Navigating to: ${itemId}`);
   };
 
   const getUserInitials = () => {
@@ -63,7 +62,6 @@ export default function Sidebar({ user, logoutUser, activeView, onNavigate }) {
     
     switch(action) {
       case 'settings':
-        console.log('Navigate to settings');
         break;
       case 'logout':
         logoutUser(); 

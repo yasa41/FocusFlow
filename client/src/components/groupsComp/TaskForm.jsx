@@ -7,7 +7,7 @@ export default function TaskForm({ members, editingTask, onSubmit, onCancel }) {
     description: "",
     dueDate: "",
     priority: "Medium",
-    assignedTo: "", // single string for dropdown
+    assignedTo: "",
     subject: "",
     estimatedTime: "",
   };

@@ -8,9 +8,7 @@ export const useDashboard = () => {
 
   const fetchDashboard = async () => {
     try {
-      console.log(' Calling /dashboard endpoint...');
       const response = await getUserDashboard();
-      console.log(' Dashboard data received:', response.data);
       
       if (response.data.success) {
         setDashboardData(response.data.dashboard);

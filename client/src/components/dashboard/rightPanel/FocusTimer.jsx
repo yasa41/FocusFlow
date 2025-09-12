@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 
 export default function FocusTimer() {
-  const [secondsLeft, setSecondsLeft] = useState(30 * 60); // 25 minutes default
+  const [secondsLeft, setSecondsLeft] = useState(30 * 60); 
   const [isRunning, setIsRunning] = useState(false);
   const intervalRef = useRef(null);
 

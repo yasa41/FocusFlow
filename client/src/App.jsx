@@ -1,4 +1,4 @@
-// App.js
+
 import { Routes, Route } from "react-router-dom";
 import LandingPage from "./pages/LandingPage";
 import SlidingAuth from "./pages/SlidingAuth";

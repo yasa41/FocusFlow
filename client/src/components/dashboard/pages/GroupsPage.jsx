@@ -9,7 +9,6 @@ export default function GroupsPage({ groups }) {
   const handleCreateGroup = async () => {
     try {
       const response = await createGroup(); 
-      console.log('Group created:', response.data);
     } catch (error) {
       console.error('Failed to create group:', error);
     }

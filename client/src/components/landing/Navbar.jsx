@@ -62,7 +62,7 @@ const Navbar = ({ mobileMenuOpen, setMobileMenuOpen }) => {
           {/* Mobile Menu Button */}
           <button
             className="md:hidden p-2 text-gray-600 hover:text-gray-900"
-            onClick={() => setMobileMenuOpen(!mobileMenuOpen)} //sets it to true so that when its open it will be X or else menu icon 
+            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
           >
             {mobileMenuOpen ? (
               <FiX className="w-6 h-6" />

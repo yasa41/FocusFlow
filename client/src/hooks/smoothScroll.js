@@ -6,7 +6,6 @@ export  const scrollToSection = (event, sectionId) => {
         behavior: 'smooth', 
         block: 'start' 
       });
-      // Close mobile menu after scrolling
       setMobileMenuOpen(false);
     }
   };

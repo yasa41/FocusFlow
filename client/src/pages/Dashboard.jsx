@@ -18,7 +18,6 @@ export default function Dashboard() {
   const handleLogout = async () => {
     try {
       await logoutUser(); 
-      localStorage.removeItem('token');
       navigate('/');
     } catch (error) {
       console.error('Logout failed:', error);

@@ -12,7 +12,6 @@ import {
 export default function GroupCard({ group, allTasks = [] }) {
   const navigate = useNavigate();
 
-  // Task calculations as before
   const groupTasks = allTasks.filter(
     (task) => task.group?.id === group.id || task.group?._id === group.id,
   );

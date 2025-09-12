@@ -93,18 +93,16 @@ const handleDeleteGroup = async () => {
   if (!confirmed) return;
 
   try {
-    const res = await onDeleteGroup(group.id); // Pass group id here!
+    const res = await onDeleteGroup(group.id); 
     if (!res.success) {
       alert("Failed to delete group: " + res.message);
     }
-    // Successful redirect or UI update should be handled by parent
   } catch (err) {
     alert("Error deleting group");
   }
 };
 
 
-  // UI
   return (
     <div className="max-w-4xl mx-auto p-6 grid gap-8">
       <h2 className="text-2xl font-bold mb-4">Settings</h2>

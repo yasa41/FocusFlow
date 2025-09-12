@@ -16,7 +16,6 @@ export default function TaskSection({
   const [editingTask, setEditingTask] = useState(null);
 
   useEffect(() => {
-    console.log("TaskSection tasks:", tasks);
   }, [
     tasks?.all?.length,
     tasks?.byStatus?.pending?.length,
@@ -24,7 +23,6 @@ export default function TaskSection({
     tasks?.byStatus?.completed?.length,
   ]);
 
-  // No filtering - display all tasks in grid
   const displayedTasks = tasks.all;
 
   const totalTasks = tasks.all.length;

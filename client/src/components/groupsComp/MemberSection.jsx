@@ -3,11 +3,9 @@ import { FaUserMinus } from "react-icons/fa";
 
 export default function MembersSection({ members, isOwner, onRemoveMember, getAvatarDisplay }) {
   useEffect(() => {
-    console.log("[MembersSection] members:", members);
   }, [members]);
 
   const handleRemove = async (userId, name) => {
-    console.log("[MembersSection] Removing member:", userId, name);
     if (window.confirm(`Remove member ${name} from group?`)) {
       await onRemoveMember(userId);
     }

@@ -67,7 +67,7 @@ export function TaskCard({ task, onClick }) {
               </span>
             )}
             
-            {/* Group name if available */}
+            {/* Group name */}
             {task.group && (
               <>
                 <span className="text-sm text-gray-300">•</span>

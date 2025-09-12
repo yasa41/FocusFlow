@@ -12,9 +12,7 @@ export default function Onboarding() {
   useEffect(() => {
     const fetchUserData = async () => {
       try {
-        console.log('Calling /me endpoint...');
         const response = await getCurrentUser();
-        console.log('/me response:', response.data); 
         
         if (response.data.success) {
           setUserData(response.data.user);
@@ -33,12 +31,10 @@ export default function Onboarding() {
   }, []);
 
   const handleProfileComplete = () => {
-    console.log('Profile completed, navigating to dashboard');
     navigate('/dashboard');
   };
 
   const handleProfileSkip = () => {
-    console.log('Profile skipped, navigating to dashboard');
     navigate('/dashboard');  
   };
 

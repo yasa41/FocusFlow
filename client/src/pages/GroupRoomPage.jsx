@@ -42,11 +42,7 @@ export default function GroupRoomPage() {
 
   const [activeSection, setActiveSection] = useState("tasks");
 
-  useEffect(() => {
-    console.log("[GroupRoomPage] group:", group);
-    console.log("[GroupRoomPage] tasks:", tasks);
-    console.log("[GroupRoomPage] activeSection:", activeSection);
-  }, [group, tasks, activeSection]);
+  useEffect(() => {}, [group, tasks, activeSection]);
 
   if (loading) return <div>Loading group data...</div>;
   if (error) return <div className="text-red-600">Error: {error}</div>;
@@ -97,7 +93,6 @@ export default function GroupRoomPage() {
           icon={<FaTasks />}
           label="Tasks"
           onClick={() => {
-            console.log("Switching to Tasks section");
             setActiveSection("tasks");
           }}
         />
@@ -106,7 +101,6 @@ export default function GroupRoomPage() {
           icon={<FaUsers />}
           label="Members"
           onClick={() => {
-            console.log("Switching to Members section");
             setActiveSection("members");
           }}
         />
@@ -115,7 +109,6 @@ export default function GroupRoomPage() {
           icon={<FaCog />}
           label="Settings"
           onClick={() => {
-            console.log("Switching to Settings section");
             setActiveSection("settings");
           }}
         />

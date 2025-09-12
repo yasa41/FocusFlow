@@ -31,10 +31,8 @@ export function useGroupRoom() {
   const fetchGroupData = useCallback(async () => {
     setLoading(true);
     setError(null);
-    console.log("[useGroupRoom] fetchGroupData called for groupId:", groupId);
     try {
       const groupRes = await getGroupDetails(groupId);
-      console.log("[useGroupRoom] getGroupDetails response:", groupRes);
       if (!groupRes.data.success) {
         setError("Failed to load group details");
         setLoading(false);
@@ -43,7 +41,6 @@ export function useGroupRoom() {
       setGroup(groupRes.data.group);
 
       const tasksRes = await getGroupTasks(groupId);
-      console.log("[useGroupRoom] getGroupTasks response:", tasksRes);
       if (!tasksRes.data.success) {
         setError("Failed to load group tasks");
         setLoading(false);
@@ -51,23 +48,19 @@ export function useGroupRoom() {
       }
       setTasks(tasksRes.data.tasks);
     } catch (err) {
-      console.error("[useGroupRoom] Error fetching group data:", err);
       setError("Error fetching group data");
     }
     setLoading(false);
   }, [groupId]);
 
   useEffect(() => {
-    console.log("[useGroupRoom] useEffect - groupId:", groupId);
     fetchGroupData();
   }, [fetchGroupData]);
 
   // Join group by invite code
   const handleJoinGroup = async (inviteCode) => {
-    console.log("[useGroupRoom] handleJoinGroup called with inviteCode:", inviteCode);
     try {
       const res = await joinGroupByInvite(inviteCode);
-      console.log("[useGroupRoom] joinGroup response:", res);
       if (res.data.success) {
         await fetchGroupData();
       }
@@ -80,26 +73,21 @@ export function useGroupRoom() {
 
   // Leave group
   const handleLeaveGroup = async () => {
-    console.log("[useGroupRoom] handleLeaveGroup called");
     try {
       const res = await leaveGroup(groupId);
-      console.log("[useGroupRoom] leaveGroup response:", res);
       if (res.data.success) {
         navigate("/dashboard");
       }
       return res.data;
     } catch (err) {
-      console.error("[useGroupRoom] leaveGroup error:", err);
       return { success: false, message: err.message };
     }
   };
 
   // Create new task
   const handleCreateTask = async (taskData) => {
-    console.log("[useGroupRoom] handleCreateTask called", taskData);
     try {
       const res = await createTask(groupId, taskData);
-      console.log("[useGroupRoom] createTask response:", res);
       if (res.data.success) {
         await fetchGroupData();
       }
@@ -112,10 +100,8 @@ export function useGroupRoom() {
 
   // Update task details
   const handleUpdateTask = async (taskId, updatedData) => {
-    console.log("[useGroupRoom] handleUpdateTask called for taskId:", taskId, updatedData);
     try {
       const res = await updateTask(taskId, updatedData);
-      console.log("[useGroupRoom] updateTask response:", res);
       if (res.data.success) {
         await fetchGroupData();
       }
@@ -128,10 +114,8 @@ export function useGroupRoom() {
 
   // Delete a task
   const handleDeleteTask = async (taskId) => {
-    console.log("[useGroupRoom] handleDeleteTask called for taskId:", taskId);
     try {
       const res = await deleteTask(taskId);
-      console.log("[useGroupRoom] deleteTask response:", res);
       if (res.data.success) {
         await fetchGroupData();
       }
@@ -144,10 +128,8 @@ export function useGroupRoom() {
 
   // Update task status
   const handleUpdateTaskStatus = async (taskId, status) => {
-    console.log("[useGroupRoom] handleUpdateTaskStatus called", { taskId, status });
     try {
       const res = await updateTaskStatus(taskId, status);
-      console.log("[useGroupRoom] updateTaskStatus response:", res);
       if (res.data.success) {
         await fetchGroupData();
       }
@@ -160,10 +142,8 @@ export function useGroupRoom() {
 
   // Remove member
   const handleRemoveMember = async (userId) => {
-    console.log("[useGroupRoom] handleRemoveMember called for userId:", userId);
     try {
       const res = await removeMember(groupId, userId);
-      console.log("[useGroupRoom] removeMember response:", res);
       if (res.data.success) {
         await fetchGroupData();
       }
@@ -184,10 +164,8 @@ const handleDeleteGroup = async () => {
 
   try {
     const res = await deleteGroup(group.id);
-    console.log("Deleting group id:", groupId);
 
     if (res.data.success) {
-      // You may want to redirect away after deletion, e.g. to dashboard
       navigate('/dashboard');
     }
     return res.data;
@@ -199,10 +177,8 @@ const handleDeleteGroup = async () => {
 
   // Transfer ownership
   const handleTransferOwnership = async (newOwnerId) => {
-    console.log("[useGroupRoom] handleTransferOwnership called with newOwnerId:", newOwnerId);
     try {
       const res = await transferOwnership(groupId, newOwnerId);
-      console.log("[useGroupRoom] transferOwnership response:", res);
       if (res.data.success) {
         await fetchGroupData();
       }
@@ -213,9 +189,7 @@ const handleDeleteGroup = async () => {
     }
   };
 
-  useEffect(() => {
-    console.log("[useGroupRoom] State:", { group, tasks, loading, error });
-  }, [group, tasks, loading, error]);
+  useEffect(() => { }, [group, tasks, loading, error]);
 
   return {
     group,
