@@ -6,7 +6,6 @@ import { validatePrivateMessage, validateGroupMessage } from '../middleware/sock
 class SocketController {
   // Main connection handler
   handleConnection(socket, io) {
-    console.log(`${socket.userName} connected`);
     
     // Handle request for unread messages (when user comes back online)
     socket.on('get_unread_messages', async () => {
@@ -35,7 +34,6 @@ class SocketController {
     
     // User disconnects
     socket.on('disconnect', () => {
-      console.log(`${socket.userName} disconnected`);
     });
   }
   
@@ -53,7 +51,6 @@ class SocketController {
       
       if (unreadMessages.length > 0) {
         socket.emit('unread_messages', unreadMessages);
-        console.log(` Sent ${unreadMessages.length} unread messages to ${socket.userName}`);
       }
       
     } catch (error) {
@@ -76,7 +73,6 @@ class SocketController {
         { read: true }
       );
       
-      console.log(`${socket.userName} marked messages from ${fromUserId} as read`);
       
     } catch (error) {
       console.error('Mark messages read error:', error);
@@ -99,7 +95,6 @@ class SocketController {
       // Join socket rooms for each group
       userGroups.forEach(group => {
         socket.join(`group_${group._id}`);
-        console.log(`${socket.userName} joined ${group.name}`);
       });
       
       socket.emit('groups_joined', { 
@@ -161,7 +156,6 @@ class SocketController {
       // Confirm to sender 
       socket.emit('private_message_sent', messageData);
       
-      console.log(`Private: ${socket.userName} → ${recipient.name}`);
       
     } catch (error) {
       console.error('Private message error:', error);
@@ -216,7 +210,6 @@ class SocketController {
       // Send to all group members 
       io.to(`group_${data.groupId}`).emit('group_message_received', messageData);
       
-      console.log(` Group: ${socket.userName} → ${group.name}`);
       
     } catch (error) {
       console.error('Group message error:', error);

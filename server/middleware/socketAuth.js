@@ -31,7 +31,6 @@ export const verifySocketToken = async (socket, next) => {
     // Join user personal socket room for direct messaging
     socket.join(socket.userId);
 
-    console.log(`Socket connected and authenticated: ${user.name} (${user.email})`);
 
     next();
   } catch (err) {
