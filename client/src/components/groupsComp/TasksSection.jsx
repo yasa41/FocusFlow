@@ -46,7 +46,7 @@ export default function TaskSection({
 
   const handleSubmit = async (taskData) => {
     if (editingTask) {
-      await onUpdate(editingTask._id, taskData);
+      await onUpdate(editingTask.id, taskData);
     } else {
       await onCreate(taskData);
     }
@@ -68,8 +68,7 @@ export default function TaskSection({
   return (
     <>
       <div className="flex justify-between items-center mb-6">
-        {/* Removed filters buttons since no filtering */}
-        <div></div>
+       
 
         <button
           className="flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700"

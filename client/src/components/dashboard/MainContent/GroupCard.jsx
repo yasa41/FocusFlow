@@ -73,7 +73,6 @@ export default function GroupCard({ group, allTasks = [] }) {
               <h3 className="font-bold text-gray-900 text-lg mb-1 truncate group-hover:text-blue-600 transition-colors duration-300">
                 {group.name}
               </h3>
-              <p className="text-gray-600 text-sm truncate mb-3">{group.description}</p>
 
               {/* Status badges */}
               <div className="flex items-center space-x-2">

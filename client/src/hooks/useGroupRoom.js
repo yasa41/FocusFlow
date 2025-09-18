@@ -11,7 +11,7 @@ import {
   deleteGroup,
   updateTaskStatus,
   removeMember,
-  transferOwnership,
+  transferOwnership,updateGroup
 } from "../services/api";
 
 export function useGroupRoom() {
@@ -83,7 +83,15 @@ export function useGroupRoom() {
       return { success: false, message: err.message };
     }
   };
-
+  //Update Group Details 
+const handleUpdateGroupDetails = async (updatedData) => {
+    try {
+      const res = await updateGroup(groupId, updatedData);
+      return res.data;
+    } catch (err) {
+      return { success: false, message: err.message };
+    }
+  };
   // Create new task
   const handleCreateTask = async (taskData) => {
     try {
@@ -205,6 +213,6 @@ const handleDeleteGroup = async () => {
     handleUpdateTaskStatus,
     handleRemoveMember,
     handleTransferOwnership,
-     handleDeleteGroup
+     handleDeleteGroup,handleUpdateGroupDetails
   };
 }

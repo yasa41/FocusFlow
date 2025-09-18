@@ -45,7 +45,7 @@ export default function HeroSection({ user, tasks }) {
                 {greeting}, {userName}!
               </h1>
               <p className="text-blue-100 mb-6 text-lg">
-                Ready to crush your study goals today? Let's make progress together!
+                Ready to crush your goals today? Let's make progress together!
               </p>
 
               {/* Stats from API data */}
@@ -62,7 +62,7 @@ export default function HeroSection({ user, tasks }) {
                 <div className="flex items-center space-x-2">
                   <FiZap className="w-6 h-6 text-white" />
                   <div>
-                    <p className="text-sm text-blue-100">Study Streak</p>
+                    <p className="text-sm text-blue-100">Streak</p>
                     <p className="font-semibold">{currentStreak} days</p>
                   </div>
                 </div>
@@ -75,7 +75,7 @@ export default function HeroSection({ user, tasks }) {
                   className="bg-white text-blue-600 px-6 py-3 rounded-lg font-semibold hover:bg-gray-50 transition-colors duration-200 shadow-lg flex items-center space-x-2"
                 >
                   <FiUsers className="w-5 h-5" />
-                  <span>Join New Study Group</span>
+                  <span>Join New Group</span>
                 </button>
 
                 <button 

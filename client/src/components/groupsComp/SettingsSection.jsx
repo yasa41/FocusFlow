@@ -7,7 +7,7 @@ export default function SettingsSection({
   onTransferOwnership,
   onLeaveGroup,
   fetchGroupData,
-  onDeleteGroup
+  onDeleteGroup,  onUpdateGroupDetails
 }) {
   const [transferToUserId, setTransferToUserId] = useState("");
   const [leaveError, setLeaveError] = useState("");
@@ -64,12 +64,17 @@ export default function SettingsSection({
     }
   };
 
-  const handleUpdateGroupDetails = async (e) => {
+ const handleUpdateGroupDetails = async (e) => {
     e.preventDefault();
     setUpdateLoading(true);
     try {
-      alert("Group details updated (simulate)");
-      fetchGroupData();
+      const res = await onUpdateGroupDetails(formData); // <-- actual API call
+      if (res.success) {
+        alert("Group details updated!");
+        fetchGroupData();
+      } else {
+        alert("Failed to update group details: " + res.message);
+      }
     } catch {
       alert("Failed to update group details");
     }

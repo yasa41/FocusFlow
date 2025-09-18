@@ -7,7 +7,7 @@ export default function TaskForm({ members, editingTask, onSubmit, onCancel }) {
     description: "",
     dueDate: "",
     priority: "Medium",
-    assignedTo: "",
+    assignedTo: [],
     subject: "",
     estimatedTime: "",
   };
@@ -21,14 +21,11 @@ export default function TaskForm({ members, editingTask, onSubmit, onCancel }) {
         description: editingTask.description || "",
         dueDate: editingTask.dueDate ? editingTask.dueDate.split("T")[0] : "",
         priority: editingTask.priority || "Medium",
-        assignedTo:
-          Array.isArray(editingTask.assignedTo) && editingTask.assignedTo.length
-            ? typeof editingTask.assignedTo[0] === "string"
-              ? editingTask.assignedTo[0]
-              : editingTask.assignedTo[0]?._id || ""
-            : typeof editingTask.assignedTo === "string"
-            ? editingTask.assignedTo
-            : editingTask.assignedTo?._id || "",
+        assignedTo: Array.isArray(editingTask.assignedTo)
+          ? editingTask.assignedTo.map(u => (typeof u === "string" ? u : u._id))
+          : editingTask.assignedTo
+            ? [typeof editingTask.assignedTo === "string" ? editingTask.assignedTo : editingTask.assignedTo._id]
+            : [],
         subject: editingTask.subject || "",
         estimatedTime: editingTask.estimatedTime || "",
       });
@@ -40,6 +37,11 @@ export default function TaskForm({ members, editingTask, onSubmit, onCancel }) {
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((d) => ({ ...d, [name]: value }));
+  };
+
+  const handleMultiSelectChange = (e) => {
+    const options = Array.from(e.target.selectedOptions, option => option.value);
+    setFormData(d => ({ ...d, assignedTo: options }));
   };
 
   const handleSubmit = (e) => {
@@ -121,10 +123,11 @@ export default function TaskForm({ members, editingTask, onSubmit, onCancel }) {
             id="assignedTo"
             name="assignedTo"
             value={formData.assignedTo}
-            onChange={handleChange}
+            onChange={handleMultiSelectChange}
+            multiple
+            style={{ height: "120px", overflowY: "auto" }} 
             className="w-full border px-3 py-2 rounded"
           >
-            <option value="">Unassigned</option>
             {members.map((m) => (
               <option key={m.userId} value={m.userId}>
                 {m.name}

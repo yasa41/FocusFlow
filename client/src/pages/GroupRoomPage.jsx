@@ -36,7 +36,7 @@ export default function GroupRoomPage() {
     handleRemoveMember,
     handleTransferOwnership,
     handleLeaveGroup,
-    fetchGroupData,
+    fetchGroupData, handleUpdateGroupDetails,
      handleDeleteGroup
   } = useGroupRoom();
 
@@ -119,10 +119,10 @@ export default function GroupRoomPage() {
         <TaskSection
           tasks={tasks}
           group={group}
-          onCreateTask={handleCreateTask}
-          onUpdateTask={handleUpdateTask}
+          onCreate={handleCreateTask}
+          onUpdate={handleUpdateTask}
           onUpdateTaskStatus={handleUpdateTaskStatus}
-          onDeleteTask={handleDeleteTask}
+          onDelete={handleDeleteTask}
           currentUserId={group.currentUserId}
         />
       )}
@@ -144,6 +144,7 @@ export default function GroupRoomPage() {
           onLeaveGroup={handleLeaveGroup}
           fetchGroupData={fetchGroupData}
           onDeleteGroup={handleDeleteGroup}
+           onUpdateGroupDetails={handleUpdateGroupDetails} 
         />
       )}
     </div>

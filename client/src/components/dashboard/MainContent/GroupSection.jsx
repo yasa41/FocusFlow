@@ -27,9 +27,9 @@ export default function GroupsSection({ groups, recentTasks = [] }) {
         {/* Header */}
         <div className="flex items-center justify-between">
           <div>
-            <h2 className="text-2xl font-semibold text-gray-900">My Study Groups</h2>
+            <h2 className="text-2xl font-semibold text-gray-900">My Groups</h2>
             <p className="text-gray-600 mt-1">
-              Track progress with your study buddies • {allGroups.length} active groups
+              Track progress with your buddies • {allGroups.length} active groups
             </p>
           </div>
           
